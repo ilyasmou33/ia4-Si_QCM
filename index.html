@@ -1,0 +1,1209 @@
+cat > /mnt/user-data/outputs/ia4_qcm_v3.html << 'HTMLEOF'
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IA4 Security QCM Trainer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f0f2f7;
+  --surface: #ffffff;
+  --surface2: #f7f8fc;
+  --border: #e2e6ef;
+  --text: #111827;
+  --text2: #4b5563;
+  --text3: #9ca3af;
+  --primary: #3b5bdb;
+  --primary-bg: #eef2ff;
+  --ok: #087f5b;
+  --ok-bg: #d3f9d8;
+  --ok-border: #63e6be;
+  --bad: #c92a2a;
+  --bad-bg: #ffe3e3;
+  --bad-border: #ff8787;
+  --warn: #e67700;
+  --warn-bg: #fff3bf;
+  --warn-border: #ffd43b;
+  --tp1: #1971c2; --tp1-bg: #dbe4ff;
+  --tp2: #c2790a; --tp2-bg: #fff3bf;
+  --tp3: #2f9e44; --tp3-bg: #d3f9d8;
+  --mx: #9c36b5; --mx-bg: #f3d9fa;
+  --radius: 14px;
+  --shadow: 0 2px 16px rgba(0,0,0,.06);
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Syne', system-ui, sans-serif;
+  --timer-color: var(--text2);
+}
+
+[data-dark="1"] {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #1c2128;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text2: #8b949e;
+  --text3: #484f58;
+  --primary: #6e8efb;
+  --primary-bg: #1a2035;
+  --ok: #3fb950; --ok-bg: #0d2d18; --ok-border: #1f5e2e;
+  --bad: #f85149; --bad-bg: #2d1414; --bad-border: #5e1e1e;
+  --warn: #d29922; --warn-bg: #2a1f04; --warn-border: #5e4500;
+  --tp1: #79b8ff; --tp1-bg: #0c1a2e;
+  --tp2: #f0b429; --tp2-bg: #1f1500;
+  --tp3: #56d364; --tp3-bg: #0d2818;
+  --mx: #c084fc; --mx-bg: #1e0e2e;
+  --shadow: 0 2px 16px rgba(0,0,0,.4);
+  --timer-color: var(--text2);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  transition: background .2s, color .2s;
+  line-height: 1.5;
+}
+
+a, button, select { font-family: var(--sans); }
+
+/* ── LAYOUT ── */
+.shell { max-width: 780px; margin: 0 auto; padding: 24px 16px 80px; }
+
+/* ── TOPBAR ── */
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap; margin-bottom: 22px;
+}
+.brand { display: flex; flex-direction: column; }
+.brand h1 { font-size: clamp(18px,3vw,26px); font-weight: 800; letter-spacing: -.02em; }
+.brand p { font-size: 12px; color: var(--text2); margin-top: 2px; font-family: var(--mono); }
+.topbar-right { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+/* ── ICON BUTTONS ── */
+.ic-btn {
+  width: 38px; height: 38px; border-radius: 10px;
+  border: 1px solid var(--border); background: var(--surface);
+  color: var(--text); cursor: pointer; font-size: 16px;
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: background .15s, border-color .15s;
+}
+.ic-btn:hover { background: var(--surface2); border-color: var(--primary); }
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  border: 1px solid var(--border); background: var(--surface);
+  color: var(--text); border-radius: 10px;
+  padding: 8px 14px; font-size: 13px; font-weight: 700;
+  cursor: pointer; white-space: nowrap;
+  transition: background .15s, border-color .15s, color .15s;
+  font-family: var(--sans);
+}
+.btn:hover { background: var(--surface2); border-color: var(--primary); color: var(--primary); }
+.btn.primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+.btn.primary:hover { opacity: .88; color: #fff; }
+.btn.danger { background: var(--bad-bg); color: var(--bad); border-color: var(--bad-border); }
+.btn.danger:hover { opacity: .85; }
+.btn.sm { padding: 6px 11px; font-size: 12px; }
+.btn:disabled { opacity: .35; cursor: not-allowed; }
+
+/* ── LANG TOGGLE ── */
+.lang-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  border: 1px solid var(--border); background: var(--surface);
+  color: var(--text); border-radius: 10px;
+  padding: 6px 12px; font-size: 12px; font-weight: 700;
+  cursor: pointer; font-family: var(--mono);
+  transition: background .15s, border-color .15s;
+}
+.lang-btn:hover { background: var(--primary-bg); border-color: var(--primary); color: var(--primary); }
+
+/* ── TOOLBAR ── */
+.toolbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 16px; }
+select {
+  border: 1px solid var(--border); background: var(--surface); color: var(--text);
+  border-radius: 10px; padding: 8px 12px; font-size: 13px; font-weight: 600;
+  cursor: pointer; outline: none; font-family: var(--sans);
+}
+select:focus { border-color: var(--primary); }
+
+/* ── STATS ── */
+.stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-bottom: 16px; }
+.stat {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px 14px 12px;
+  box-shadow: var(--shadow);
+}
+.stat small { display: block; font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; font-family: var(--mono); }
+.stat b { font-size: 28px; font-weight: 800; font-family: var(--mono); }
+.stat.s-ok b { color: var(--ok); }
+.stat.s-bad b { color: var(--bad); }
+
+/* ── PROGRESS ── */
+.prog-wrap { margin-bottom: 16px; }
+.prog-labels { display: flex; justify-content: space-between; font-size: 12px; color: var(--text2); margin-bottom: 6px; font-family: var(--mono); }
+.prog-bar { height: 6px; background: var(--border); border-radius: 99px; overflow: hidden; }
+.prog-fill { height: 100%; border-radius: 99px; background: var(--primary); transition: width .35s ease; }
+
+/* ── MAP ── */
+.map-panel {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 18px; margin-bottom: 14px;
+  display: none; box-shadow: var(--shadow);
+}
+.map-panel.open { display: block; animation: fadeUp .2s ease; }
+.map-hd { font-size: 12px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 12px; font-family: var(--mono); }
+.map-grid { display: flex; flex-wrap: wrap; gap: 5px; }
+.mpill {
+  width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--border);
+  background: var(--surface2); color: var(--text2);
+  font-size: 11px; font-weight: 700; cursor: pointer; font-family: var(--mono);
+  transition: transform .1s, border-color .15s;
+}
+.mpill:hover { transform: scale(1.12); border-color: var(--primary); }
+.mpill.ok { background: var(--ok-bg); border-color: var(--ok-border); color: var(--ok); }
+.mpill.bad { background: var(--bad-bg); border-color: var(--bad-border); color: var(--bad); }
+.mpill.skipped { background: var(--warn-bg); border-color: var(--warn-border); color: var(--warn); }
+.mpill.cur { outline: 2.5px solid var(--primary); outline-offset: 2px; }
+.map-leg { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 10px; }
+.map-leg span { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text2); font-family: var(--mono); }
+.legdot { width: 10px; height: 10px; border-radius: 3px; }
+
+/* ── QUESTION CARD ── */
+.q-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: var(--shadow);
+  padding: 26px; margin-bottom: 12px;
+  animation: fadeUp .22s ease;
+}
+@keyframes fadeUp { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform:none; } }
+
+.q-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
+.q-top-left { display: flex; align-items: center; gap: 8px; }
+.tag {
+  display: inline-flex; align-items: center;
+  padding: 3px 10px; border-radius: 999px;
+  font-size: 11px; font-weight: 700; letter-spacing: .05em; font-family: var(--mono);
+}
+.tag.tp1 { background: var(--tp1-bg); color: var(--tp1); }
+.tag.tp2 { background: var(--tp2-bg); color: var(--tp2); }
+.tag.tp3 { background: var(--tp3-bg); color: var(--tp3); }
+.tag.mixed { background: var(--mx-bg); color: var(--mx); }
+
+.q-num { font-size: 12px; color: var(--text2); font-family: var(--mono); font-weight: 600; }
+
+.timer-ring { position: relative; width: 44px; height: 44px; flex-shrink: 0; }
+.timer-ring svg { transform: rotate(-90deg); }
+.timer-track { fill: none; stroke: var(--border); stroke-width: 3; }
+.timer-arc { fill: none; stroke: var(--primary); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 113; stroke-dashoffset: 0; transition: stroke-dashoffset .9s linear, stroke .5s; }
+.timer-arc.urgent { stroke: var(--bad); }
+.timer-num { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; font-family: var(--mono); color: var(--text2); }
+.timer-num.urgent { color: var(--bad); }
+
+.q-text { font-size: 18px; font-weight: 700; line-height: 1.45; margin-bottom: 20px; color: var(--text); }
+
+/* ── OPTIONS ── */
+.options { display: flex; flex-direction: column; gap: 9px; }
+.opt {
+  display: flex; align-items: flex-start; gap: 12px;
+  width: 100%; text-align: left;
+  background: var(--surface2); border: 1.5px solid var(--border);
+  border-radius: 11px; padding: 13px 15px;
+  font-size: 14px; font-weight: 600; line-height: 1.45; color: var(--text);
+  cursor: pointer; transition: all .15s; font-family: var(--sans);
+}
+.opt:hover:not(:disabled) { background: var(--primary-bg); border-color: var(--primary); color: var(--text); transform: translateX(4px); }
+.opt:disabled { cursor: default; }
+.opt .ltr {
+  display: flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px; border-radius: 7px; flex-shrink: 0;
+  background: var(--border); color: var(--text2);
+  font-size: 12px; font-weight: 800; font-family: var(--mono);
+  margin-top: 1px;
+  transition: background .15s, color .15s;
+}
+.opt:hover:not(:disabled) .ltr { background: var(--primary); color: #fff; }
+.opt .opt-text { flex: 1; }
+
+.opt.correct { background: var(--ok-bg); border-color: var(--ok-border); color: var(--text); }
+.opt.correct .ltr { background: var(--ok); color: #fff; }
+.opt.wrong { background: var(--bad-bg); border-color: var(--bad-border); color: var(--text); }
+.opt.wrong .ltr { background: var(--bad); color: #fff; }
+.opt.reveal { background: var(--ok-bg); border-color: var(--ok-border); color: var(--text); }
+.opt.reveal .ltr { background: var(--ok); color: #fff; }
+
+/* ── FEEDBACK ── */
+.fb {
+  display: none; margin-top: 16px; padding: 15px 17px;
+  border-radius: 11px; font-size: 14px; line-height: 1.6;
+}
+.fb.show { display: block; animation: fadeUp .18s ease; }
+.fb.ok { background: var(--ok-bg); border: 1px solid var(--ok-border); color: var(--text); }
+.fb.bad { background: var(--bad-bg); border: 1px solid var(--bad-border); color: var(--text); }
+.fb.skip { background: var(--warn-bg); border: 1px solid var(--warn-border); color: var(--text); }
+.fb-title { font-weight: 800; font-size: 14px; margin-bottom: 6px; display: flex; align-items: center; gap: 7px; color: var(--text); }
+.fb-title.ok-t { color: var(--ok); }
+.fb-title.bad-t { color: var(--bad); }
+.fb-title.skip-t { color: var(--warn); }
+.fb-exp { color: var(--text2); }
+
+/* ── NAV ── */
+.nav { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+.nav-l, .nav-r { display: flex; gap: 8px; }
+.kbd { font-size: 10px; padding: 2px 5px; background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; color: var(--text3); font-family: var(--mono); margin-left: 4px; }
+
+/* ── RESULTS ── */
+.results {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: var(--shadow);
+  padding: 36px 28px; text-align: center;
+  animation: fadeUp .3s ease;
+}
+.res-emoji { font-size: 40px; margin-bottom: 8px; }
+.res-pct { font-size: 72px; font-weight: 800; font-family: var(--mono); letter-spacing: -.04em; line-height: 1; margin-bottom: 4px; }
+.res-msg { font-size: 15px; color: var(--text2); margin-bottom: 24px; }
+.res-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 24px; }
+.res-card { background: var(--surface2); border-radius: 11px; padding: 16px 8px; }
+.res-card-n { font-size: 30px; font-weight: 800; font-family: var(--mono); }
+.res-card-l { font-size: 11px; color: var(--text2); margin-top: 3px; text-transform: uppercase; letter-spacing: .06em; font-family: var(--mono); }
+.tp-section { text-align: left; margin-bottom: 24px; }
+.tp-hd { font-size: 11px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 12px; font-family: var(--mono); }
+.tp-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.tp-lbl { width: 52px; font-size: 12px; font-weight: 700; font-family: var(--mono); }
+.tp-bar { flex: 1; height: 8px; background: var(--border); border-radius: 99px; overflow: hidden; }
+.tp-fill { height: 100%; border-radius: 99px; transition: width .6s ease; }
+.tp-pct { font-size: 12px; font-weight: 700; color: var(--text2); min-width: 60px; text-align: right; font-family: var(--mono); }
+.res-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+/* ── HINT ── */
+.hint { text-align: center; font-size: 12px; color: var(--text3); margin-top: 14px; font-family: var(--mono); }
+
+/* ── RESPONSIVE ── */
+@media(max-width:580px) {
+  .stats { grid-template-columns: repeat(2,1fr); }
+  .q-text { font-size: 16px; }
+  .q-card { padding: 18px; }
+  .res-pct { font-size: 52px; }
+  .kbd { display: none; }
+  .hint { display: none; }
+}
+@media(max-width:400px) {
+  .nav { flex-direction: column; align-items: stretch; }
+  .nav-l, .nav-r { justify-content: center; }
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="brand">
+      <h1 id="brand-title">IA4 Security QCM</h1>
+      <p id="brand-sub">Sécurité Informatique · TP1 · TP2 · TP3</p>
+    </div>
+    <div class="topbar-right">
+      <button class="lang-btn" id="langBtn" onclick="toggleLang()">🌐 EN</button>
+      <button class="ic-btn" id="darkBtn" onclick="toggleDark()" title="Dark / Light">🌙</button>
+      <button class="ic-btn" onclick="toggleMap()" title="Question map">🗺️</button>
+      <button class="btn danger sm" onclick="resetQuiz()" id="btn-reset">↺ Reset</button>
+    </div>
+  </div>
+
+  <!-- TOOLBAR -->
+  <div class="toolbar">
+    <select id="filter" onchange="setFilter()"></select>
+    <button class="btn" onclick="shuffleQ()" id="btn-shuffle">🔀 <span id="lbl-shuffle">Mélanger</span></button>
+    <button class="btn" onclick="randomQ()" id="btn-random">🎲 <span id="lbl-random">Aléatoire</span></button>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat s-ok"><small id="lbl-correct">Correctes</small><b id="sOk">0</b></div>
+    <div class="stat s-bad"><small id="lbl-wrong">Erreurs</small><b id="sWrong">0</b></div>
+    <div class="stat"><small id="lbl-answered">Répondues</small><b id="sAns">0</b></div>
+    <div class="stat"><small id="lbl-left">Restantes</small><b id="sLeft">0</b></div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="prog-wrap">
+    <div class="prog-labels"><span id="progText">Question 1 / 0</span><span id="progPct">0%</span></div>
+    <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  </div>
+
+  <!-- MAP -->
+  <div class="map-panel" id="mapPanel">
+    <div class="map-hd" id="lbl-map">Carte des questions — cliquez pour naviguer</div>
+    <div class="map-grid" id="mapGrid"></div>
+    <div class="map-leg">
+      <span><div class="legdot" style="background:var(--ok)"></div><span id="leg-ok">Correcte</span></span>
+      <span><div class="legdot" style="background:var(--bad)"></div><span id="leg-bad">Erreur</span></span>
+      <span><div class="legdot" style="background:var(--warn)"></div><span id="leg-skip">Passée</span></span>
+      <span><div class="legdot" style="background:var(--border)"></div><span id="leg-blank">Non répondue</span></span>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div id="main"></div>
+
+  <p class="hint" id="hint-text">← → naviguer · A B C D répondre · S passer</p>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════
+   DATA  — 100+ questions, FR + EN
+═══════════════════════════════════════════ */
+const Q = [
+/* ─── TP1 ─── */
+{tp:"TP1",
+ fr:{q:"Quel est l'environnement virtuel utilisé dans ces TPs pour déployer des architectures réseau ?",opts:["VMware Workstation","Labtainers","GNS3","Packet Tracer"],exp:"Labtainers est un framework basé sur Docker qui tourne sous Ubuntu Desktop pour créer des environnements de cybersécurité multi-composants."},
+ en:{q:"Which virtual environment is used in these labs to deploy network architectures?",opts:["VMware Workstation","Labtainers","GNS3","Packet Tracer"],exp:"Labtainers is a Docker-based framework running on Ubuntu Desktop to build multi-component cybersecurity environments."},
+ ans:1},
+{tp:"TP1",
+ fr:{q:"Quel est l'identifiant utilisateur par défaut pour s'authentifier à la VM Labtainer ?",opts:["admin","root","ubuntu","student"],exp:"L'identifiant est 'student' et le mot de passe est 'password123'."},
+ en:{q:"What is the default username to authenticate to the Labtainer VM?",opts:["admin","root","ubuntu","student"],exp:"The username is 'student' and the password is 'password123'."},
+ ans:3},
+{tp:"TP1",
+ fr:{q:"Quelle technologie de conteneurisation utilise Labtainers ?",opts:["LXC","Docker","Podman","VirtualBox"],exp:"Labtainers utilise les conteneurs Docker pour héberger ses environnements."},
+ en:{q:"Which containerisation technology does Labtainers use?",opts:["LXC","Docker","Podman","VirtualBox"],exp:"Labtainers uses Docker containers to host its lab environments."},
+ ans:1},
+{tp:"TP1",
+ fr:{q:"Quelle commande lance le laboratoire telnet dans Labtainers ?",opts:["labtainer ssh","labtainer telnetlab","labtainer tcpip","start telnet"],exp:"La commande est 'labtainer telnetlab' exécutée depuis le répertoire de travail."},
+ en:{q:"Which command starts the telnet lab in Labtainers?",opts:["labtainer ssh","labtainer telnetlab","labtainer tcpip","start telnet"],exp:"The command is 'labtainer telnetlab' run from the working directory."},
+ ans:1},
+{tp:"TP1",
+ fr:{q:"Quel est le principal problème de sécurité mis en évidence par Telnet ?",opts:["Chiffrement trop faible","Transmission des mots de passe en clair","Absence d'authentification","Port non standard"],exp:"Telnet transmet toutes les données, y compris les mots de passe, en texte clair sur le réseau."},
+ en:{q:"What is the main security problem highlighted by Telnet?",opts:["Encryption too weak","Passwords transmitted in clear text","No authentication","Non-standard port"],exp:"Telnet transmits all data, including passwords, as plain text over the network."},
+ ans:1},
+{tp:"TP1",
+ fr:{q:"Quelle commande affiche le trafic réseau TCP avec son contenu sur le serveur ?",opts:["tcpdump -i eth0 -X tcp","wireshark eth0","netstat -na","nmap -sT"],exp:"'sudo tcpdump -i eth0 -X tcp' capture et affiche le trafic TCP en hexadécimal et ASCII."},
+ en:{q:"Which command displays TCP network traffic with its content on the server?",opts:["tcpdump -i eth0 -X tcp","wireshark eth0","netstat -na","nmap -sT"],exp:"'sudo tcpdump -i eth0 -X tcp' captures and displays TCP traffic in hex and ASCII."},
+ ans:0},
+{tp:"TP1",
+ fr:{q:"Comment Telnet transmet-il les caractères tapés lors d'une connexion ?",opts:["En lot chiffré","Un caractère par paquet en clair","Compressés puis envoyés","En binaire signé"],exp:"Avec Telnet, chaque caractère tapé est envoyé dans un paquet réseau séparé en texte clair."},
+ en:{q:"How does Telnet transmit typed characters during a connection?",opts:["As an encrypted batch","One character per packet in plain text","Compressed then sent","As signed binary"],exp:"With Telnet, each typed character is sent in a separate network packet as plain text."},
+ ans:1},
+{tp:"TP1",
+ fr:{q:"Quel protocole sécurisé remplace Telnet pour protéger les communications ?",opts:["FTP","HTTP","SSH","SFTP"],exp:"SSH (Secure Shell) chiffre toutes les communications, rendant le trafic illisible à la capture."},
+ en:{q:"Which secure protocol replaces Telnet to protect communications?",opts:["FTP","HTTP","SSH","SFTP"],exp:"SSH (Secure Shell) encrypts all communications, making captured traffic unreadable."},
+ ans:2},
+{tp:"TP1",
+ fr:{q:"Quelle commande arrête le laboratoire telnetlab dans Labtainers ?",opts:["killall labtainer","exit telnetlab","stoplab telnetlab","labtainer -stop"],exp:"La commande 'stoplab telnetlab' arrête proprement l'environnement de laboratoire."},
+ en:{q:"Which command stops the telnetlab in Labtainers?",opts:["killall labtainer","exit telnetlab","stoplab telnetlab","labtainer -stop"],exp:"The command 'stoplab telnetlab' cleanly stops the lab environment."},
+ ans:2},
+{tp:"TP1",
+ fr:{q:"Quel fichier est pré-créé sur le serveur pour être visualisé lors de l'exercice ?",opts:["readme.txt","filetoview.txt","testfile.txt","server.txt"],exp:"Le fichier 'filetoview.txt' est pré-créé sur le serveur pour l'exercice d'accès Telnet."},
+ en:{q:"Which file is pre-created on the server to be viewed during the exercise?",opts:["readme.txt","filetoview.txt","testfile.txt","server.txt"],exp:"The file 'filetoview.txt' is pre-created on the server for the Telnet access exercise."},
+ ans:1},
+{tp:"TP1",
+ fr:{q:"Que démontre principalement l'expérience tcpdump + Telnet du TP1 ?",opts:["La compression TCP","La lisibilité du trafic Telnet capturé","La vitesse de SSH","La génération de certificats"],exp:"Le TP1 montre que Telnet ne chiffre pas les communications : les données sont observables en capture réseau."},
+ en:{q:"What does the tcpdump + Telnet experiment in TP1 mainly demonstrate?",opts:["TCP compression","Readability of captured Telnet traffic","SSH speed","Certificate generation"],exp:"TP1 shows that Telnet does not encrypt communications: data is visible in a network capture."},
+ ans:1},
+{tp:"TP1",
+ fr:{q:"Quelle commande est utilisée depuis le client pour ouvrir une session Telnet vers le serveur ?",opts:["telnet <IP>","ssh <IP>","tcpdump <IP>","openssl <IP>"],exp:"La syntaxe utilisée est 'telnet <IP>', où <IP> est l'adresse IP du serveur."},
+ en:{q:"Which command is used from the client to open a Telnet session to the server?",opts:["telnet <IP>","ssh <IP>","tcpdump <IP>","openssl <IP>"],exp:"The syntax is 'telnet <IP>', where <IP> is the server's IP address."},
+ ans:0},
+{tp:"TP1",
+ fr:{q:"Dans le laboratoire Telnet, quels identifiants sont utilisés pour se connecter au serveur ?",opts:["admin/admin","root/root","ubuntu/ubuntu","student/password123"],exp:"Dans le laboratoire Telnet, le nom d'utilisateur et le mot de passe du serveur sont 'ubuntu'."},
+ en:{q:"In the Telnet lab, which credentials are used to log into the server?",opts:["admin/admin","root/root","ubuntu/ubuntu","student/password123"],exp:"In the Telnet lab the server username and password are both 'ubuntu'."},
+ ans:2},
+{tp:"TP1",
+ fr:{q:"Que signifie l'option -X dans la commande 'tcpdump -i eth0 -X tcp' ?",opts:["Arrêter la capture","Afficher les paquets en hex et ASCII","Chiffrer la capture","Filtrer UDP"],exp:"L'option -X affiche le contenu du paquet en hexadécimal et en ASCII, utile pour voir les données lisibles."},
+ en:{q:"What does the -X option mean in 'tcpdump -i eth0 -X tcp'?",opts:["Stop the capture","Show packets in hex and ASCII","Encrypt the capture","Filter UDP"],exp:"The -X option displays the packet content in hexadecimal and ASCII, useful to see readable data."},
+ ans:1},
+{tp:"TP1",
+ fr:{q:"Pourquoi SSH est-il plus sûr que Telnet ?",opts:["SSH utilise le port 23","SSH chiffre les communications","SSH n'utilise pas TCP","SSH supprime les mots de passe"],exp:"SSH protège les données par chiffrement, contrairement à Telnet qui transmet en clair."},
+ en:{q:"Why is SSH more secure than Telnet?",opts:["SSH uses port 23","SSH encrypts communications","SSH doesn't use TCP","SSH removes passwords"],exp:"SSH protects data through encryption, unlike Telnet which transmits in plain text."},
+ ans:1},
+{tp:"TP1",
+ fr:{q:"Lors de la première connexion SSH, que demande généralement le client ?",opts:["Confirmer l'authenticité de l'hôte","Supprimer la clé privée","Désactiver TCP","Changer l'adresse IP"],exp:"SSH affiche une empreinte de l'hôte et demande de confirmer avec 'yes' lors de la première connexion."},
+ en:{q:"During the first SSH connection, what does the client typically ask?",opts:["Confirm host authenticity","Delete the private key","Disable TCP","Change the IP address"],exp:"SSH displays a host fingerprint and asks you to confirm with 'yes' on the first connection."},
+ ans:0},
+{tp:"TP1",
+ fr:{q:"Que doit-on faire pour quitter une session Telnet dans le TP ?",opts:["reboot","exit","stoplab","clear"],exp:"La commande 'exit' permet de quitter la session ouverte sur le serveur via Telnet."},
+ en:{q:"What must you do to exit a Telnet session in the lab?",opts:["reboot","exit","stoplab","clear"],exp:"The 'exit' command closes the session opened on the server via Telnet."},
+ ans:1},
+{tp:"TP1",
+ fr:{q:"Quel est le rôle de VirtualBox dans TP1 ?",opts:["Capturer les mots de passe","Importer et exécuter la VM Labtainer","Générer les clés RSA","Analyser les paquets TCP"],exp:"VirtualBox sert à importer et démarrer l'appliance virtuelle Labtainer."},
+ en:{q:"What is the role of VirtualBox in TP1?",opts:["Capture passwords","Import and run the Labtainer VM","Generate RSA keys","Analyse TCP packets"],exp:"VirtualBox is used to import and start the Labtainer virtual appliance."},
+ ans:1},
+{tp:"TP1",
+ fr:{q:"Quel est le mot de passe de l'utilisateur 'student' dans la VM Labtainer ?",opts:["student","password123","ubuntu","admin"],exp:"Le TP indique que l'utilisateur est 'student' avec le mot de passe 'password123'."},
+ en:{q:"What is the password for the 'student' user in the Labtainer VM?",opts:["student","password123","ubuntu","admin"],exp:"The lab states the user is 'student' with password 'password123'."},
+ ans:1},
+{tp:"TP1",
+ fr:{q:"Quel paramètre VirtualBox facilite le copier-coller entre hôte et VM ?",opts:["NAT uniquement","Presse-papier partagé bidirectionnel","Mode plein écran","Désactivation USB"],exp:"Le TP recommande d'activer le presse-papier partagé en mode bidirectionnel."},
+ en:{q:"Which VirtualBox setting enables copy-paste between host and VM?",opts:["NAT only","Bidirectional shared clipboard","Full screen mode","USB disabled"],exp:"The lab recommends enabling the shared clipboard in bidirectional mode."},
+ ans:1},
+{tp:"TP1",
+ fr:{q:"Quelle commande affiche les interfaces réseau et adresses IP d'une machine Linux ?",opts:["netstat -na","ifconfig","ls -la","openssl version"],exp:"ifconfig affiche les interfaces réseau et leurs adresses IP (inet addr)."},
+ en:{q:"Which command displays network interfaces and IP addresses on a Linux machine?",opts:["netstat -na","ifconfig","ls -la","openssl version"],exp:"ifconfig displays network interfaces and their IP addresses (inet addr)."},
+ ans:1},
+{tp:"TP1",
+ fr:{q:"Quel outil Labtainers utilise-t-il pour créer ses conteneurs réseaux ?",opts:["KVM","Docker","Xen","LXD"],exp:"Labtainers est entièrement basé sur Docker pour isoler chaque nœud réseau du TP."},
+ en:{q:"Which tool does Labtainers use to create its network containers?",opts:["KVM","Docker","Xen","LXD"],exp:"Labtainers is entirely based on Docker to isolate each network node in the lab."},
+ ans:1},
+{tp:"TP1",
+ fr:{q:"Quelle RAM minimale est recommandée pour faire tourner la VM Labtainer ?",opts:["1 Go","2 Go","4 Go","8 Go"],exp:"Le TP1 indique que 4 Go de RAM ou plus sont recommandés."},
+ en:{q:"What is the minimum recommended RAM to run the Labtainer VM?",opts:["1 GB","2 GB","4 GB","8 GB"],exp:"TP1 states that 4 GB of RAM or more is recommended."},
+ ans:2},
+{tp:"TP1",
+ fr:{q:"Où télécharger l'appliance virtuelle Labtainer (.ova) ?",opts:["docker hub","nps.edu/web/c3o/virtual-machine-images","github.com/labtainer","ubuntu.com/labtainer"],exp:"Le lien de téléchargement indiqué dans le TP est https://nps.edu/web/c3o/virtual-machine-images."},
+ en:{q:"Where can you download the Labtainer virtual appliance (.ova)?",opts:["docker hub","nps.edu/web/c3o/virtual-machine-images","github.com/labtainer","ubuntu.com/labtainer"],exp:"The download link given in the lab is https://nps.edu/web/c3o/virtual-machine-images."},
+ ans:1},
+
+/* ─── TP2 ─── */
+{tp:"TP2",
+ fr:{q:"Quel type d'attaque DoS exploite le handshake TCP en 3 étapes ?",opts:["UDP Flood","SYN Flood","ICMP Flood","HTTP Flood"],exp:"L'attaque SYN Flood envoie de nombreux SYN sans compléter le handshake, saturant la file des connexions semi-ouvertes."},
+ en:{q:"Which DoS attack exploits the TCP 3-way handshake?",opts:["UDP Flood","SYN Flood","ICMP Flood","HTTP Flood"],exp:"A SYN Flood sends many SYN packets without completing the handshake, saturating the half-open connection queue."},
+ ans:1},
+{tp:"TP2",
+ fr:{q:"Quel est l'état TCP des connexions incomplètes lors d'une attaque SYN Flood ?",opts:["ESTABLISHED","TIME_WAIT","SYN_RECV","CLOSE_WAIT"],exp:"Les connexions ayant échangé SYN et SYN-ACK mais sans ACK final restent en état SYN_RECV."},
+ en:{q:"What TCP state do incomplete connections remain in during a SYN Flood?",opts:["ESTABLISHED","TIME_WAIT","SYN_RECV","CLOSE_WAIT"],exp:"Connections that exchanged SYN and SYN-ACK but have no final ACK stay in SYN_RECV state."},
+ ans:2},
+{tp:"TP2",
+ fr:{q:"Quelle commande Linux vérifie la taille de la file d'attente SYN (backlog) ?",opts:["netstat -na","sysctl -q net.ipv4.tcp_max_syn_backlog","ifconfig -a","ss -l"],exp:"'sudo sysctl -q net.ipv4.tcp_max_syn_backlog' affiche la taille maximale de la file SYN backlog."},
+ en:{q:"Which Linux command checks the SYN backlog queue size?",opts:["netstat -na","sysctl -q net.ipv4.tcp_max_syn_backlog","ifconfig -a","ss -l"],exp:"'sudo sysctl -q net.ipv4.tcp_max_syn_backlog' displays the maximum SYN backlog queue size."},
+ ans:1},
+{tp:"TP2",
+ fr:{q:"Quel mécanisme de défense contre SYN Flood est configurable avec sysctl ?",opts:["IPTables","SYN Cookie","TCP Wrapper","Fail2ban"],exp:"Le mécanisme SYN Cookie encode les infos de connexion dans le numéro de séquence, évitant de stocker l'état SYN."},
+ en:{q:"Which SYN Flood defence mechanism is configurable with sysctl?",opts:["IPTables","SYN Cookie","TCP Wrapper","Fail2ban"],exp:"SYN Cookie encodes connection info in the sequence number, avoiding storing SYN state."},
+ ans:1},
+{tp:"TP2",
+ fr:{q:"Quelle commande désactive le mécanisme SYN Cookie sur Linux ?",opts:["sysctl -w net.ipv4.tcp_syncookies=0","iptables -D SYN_COOKIE","service syncookies stop","sysctl disable tcp_cookie"],exp:"'sudo sysctl -w net.ipv4.tcp_syncookies=0' désactive la protection SYN Cookie."},
+ en:{q:"Which command disables the SYN Cookie mechanism on Linux?",opts:["sysctl -w net.ipv4.tcp_syncookies=0","iptables -D SYN_COOKIE","service syncookies stop","sysctl disable tcp_cookie"],exp:"'sudo sysctl -w net.ipv4.tcp_syncookies=0' disables SYN Cookie protection."},
+ ans:0},
+{tp:"TP2",
+ fr:{q:"Quel outil envoie des paquets réseau forgés depuis la machine attaquant dans TP2 ?",opts:["hping3","scapy","nping","netcat"],exp:"nping (distribué avec nmap) est utilisé pour créer et envoyer des paquets TCP/UDP/IP personnalisés."},
+ en:{q:"Which tool sends forged network packets from the attacker machine in TP2?",opts:["hping3","scapy","nping","netcat"],exp:"nping (distributed with nmap) is used to craft and send custom TCP/UDP/IP packets."},
+ ans:2},
+{tp:"TP2",
+ fr:{q:"Dans l'attaque TCP RST, quel drapeau TCP interrompt brutalement une connexion ?",opts:["FIN","ACK","RST","SYN"],exp:"Le drapeau RST (Reset) force la terminaison immédiate d'une connexion TCP existante."},
+ en:{q:"In a TCP RST attack, which TCP flag brutally terminates a connection?",opts:["FIN","ACK","RST","SYN"],exp:"The RST (Reset) flag forces immediate termination of an existing TCP connection."},
+ ans:2},
+{tp:"TP2",
+ fr:{q:"Pour réussir une attaque TCP RST, que doit connaître l'attaquant ?",opts:["Seulement l'IP destination","Le numéro de séquence TCP et le port source","Le mot de passe telnet","L'adresse MAC du serveur"],exp:"L'attaquant doit construire un paquet RST avec le bon numéro de séquence et port source, obtenus via Wireshark."},
+ en:{q:"To succeed in a TCP RST attack, what must the attacker know?",opts:["Only the destination IP","The TCP sequence number and source port","The telnet password","The server MAC address"],exp:"The attacker must build a RST packet with the correct sequence number and source port, obtained via Wireshark."},
+ ans:1},
+{tp:"TP2",
+ fr:{q:"Quel est l'objectif principal du TCP Session Hijacking ?",opts:["Intercepter le mot de passe","Injecter des commandes dans une session TCP existante","Bloquer toutes les connexions","Chiffrer le trafic"],exp:"Le hijacking injecte du contenu malveillant dans une session TCP établie, forçant les victimes à exécuter des commandes."},
+ en:{q:"What is the main goal of TCP Session Hijacking?",opts:["Intercept the password","Inject commands into an existing TCP session","Block all connections","Encrypt traffic"],exp:"Hijacking injects malicious content into an established TCP session, forcing victims to execute commands."},
+ ans:1},
+{tp:"TP2",
+ fr:{q:"Quel script convertit une commande ASCII en hexadécimal pour l'injection dans nping ?",opts:["ascii2hex.sh","hexify.py","encode.pl","b64conv.py"],exp:"Le script 'hexify.py' se trouve dans le répertoire de l'attaquant."},
+ en:{q:"Which script converts an ASCII command to hexadecimal for injection via nping?",opts:["ascii2hex.sh","hexify.py","encode.pl","b64conv.py"],exp:"The script 'hexify.py' is located in the attacker's home directory."},
+ ans:1},
+{tp:"TP2",
+ fr:{q:"Dans nping, quelle option envoie la charge utile hexadécimale ?",opts:["--payload","--data","--hex","--inject"],exp:"L'option '--data' de nping permet d'envoyer une charge utile hexadécimale dans le paquet TCP."},
+ en:{q:"In nping, which option sends the hexadecimal payload?",opts:["--payload","--data","--hex","--inject"],exp:"nping's '--data' option sends a hexadecimal payload in the TCP packet."},
+ ans:1},
+{tp:"TP2",
+ fr:{q:"Dans la topologie réseau du TP2, quelle est l'adresse IP du serveur ?",opts:["172.25.0.3","172.25.29.4","172.25.0.2","192.168.1.1"],exp:"D'après la figure 2 du TP, l'adresse IP du serveur est 172.25.0.2."},
+ en:{q:"In the TP2 network topology, what is the server's IP address?",opts:["172.25.0.3","172.25.29.4","172.25.0.2","192.168.1.1"],exp:"According to figure 2 of the lab, the server's IP address is 172.25.0.2."},
+ ans:2},
+{tp:"TP2",
+ fr:{q:"Pourquoi le SYN Cookie protège-t-il contre le SYN Flood ?",opts:["Il bloque tous les SYN","Il encode l'état sans remplir la file backlog","Il chiffre les paquets SYN","Il augmente le backlog automatiquement"],exp:"Avec SYN Cookie, le serveur n'alloue pas d'entrée dans la file backlog avant la réception du ACK final."},
+ en:{q:"Why does SYN Cookie protect against SYN Flood?",opts:["It blocks all SYNs","It encodes state without filling the backlog queue","It encrypts SYN packets","It automatically increases the backlog"],exp:"With SYN Cookie, the server allocates no backlog entry until the final ACK is received."},
+ ans:1},
+{tp:"TP2",
+ fr:{q:"Quelle option de nping définit le drapeau SYN ?",opts:["--syn","--flags syn","--tcp-flags SYN","--type syn"],exp:"Dans nping, '--flags syn' définit le drapeau SYN sur le paquet TCP."},
+ en:{q:"Which nping option sets the SYN flag?",opts:["--syn","--flags syn","--tcp-flags SYN","--type syn"],exp:"In nping, '--flags syn' sets the SYN flag on the TCP packet."},
+ ans:1},
+{tp:"TP2",
+ fr:{q:"Quel numéro de port correspond au protocole Telnet ?",opts:["22","23","25","80"],exp:"Telnet utilise le port TCP 23 par défaut."},
+ en:{q:"Which port number corresponds to the Telnet protocol?",opts:["22","23","25","80"],exp:"Telnet uses TCP port 23 by default."},
+ ans:1},
+{tp:"TP2",
+ fr:{q:"Quelle commande affiche les métriques TCP mémorisées des connexions précédentes ?",opts:["netstat -r","ip tcp_metrics show","ss --metrics","tcpdump -tcp"],exp:"'sudo ip tcp_metrics show' affiche les métriques mémorisées pour les connexions TCP précédentes."},
+ en:{q:"Which command shows memorised TCP metrics for previous connections?",opts:["netstat -r","ip tcp_metrics show","ss --metrics","tcpdump -tcp"],exp:"'sudo ip tcp_metrics show' displays memorised metrics for previous TCP connections."},
+ ans:1},
+{tp:"TP2",
+ fr:{q:"Dans un handshake TCP normal, quel paquet est envoyé en premier ?",opts:["ACK","SYN","RST","FIN"],exp:"Le client initie la connexion TCP en envoyant un segment SYN."},
+ en:{q:"In a normal TCP handshake, which packet is sent first?",opts:["ACK","SYN","RST","FIN"],exp:"The client initiates the TCP connection by sending a SYN segment."},
+ ans:1},
+{tp:"TP2",
+ fr:{q:"Dans un handshake TCP, que répond le serveur après avoir reçu un SYN ?",opts:["FIN","RST","SYN-ACK","PSH"],exp:"Le serveur répond avec SYN-ACK pour accepter l'ouverture de connexion."},
+ en:{q:"In a TCP handshake, what does the server reply after receiving a SYN?",opts:["FIN","RST","SYN-ACK","PSH"],exp:"The server replies with SYN-ACK to accept the connection."},
+ ans:2},
+{tp:"TP2",
+ fr:{q:"Quelle est la dernière étape du three-way handshake TCP ?",opts:["Le client envoie ACK","Le serveur envoie FIN","Le client envoie RST","Le serveur envoie UDP"],exp:"Après le SYN-ACK du serveur, le client envoie ACK pour finaliser la connexion."},
+ en:{q:"What is the last step of the TCP three-way handshake?",opts:["Client sends ACK","Server sends FIN","Client sends RST","Server sends UDP"],exp:"After the server's SYN-ACK, the client sends ACK to finalise the connection."},
+ ans:0},
+{tp:"TP2",
+ fr:{q:"Dans un SYN Flood, pourquoi la victime ne peut plus accepter de nouvelles connexions ?",opts:["Son disque est plein","Sa file de connexions semi-ouvertes est saturée","SSH est désinstallé","Wireshark bloque les paquets"],exp:"L'attaquant remplit la file SYN backlog avec des connexions incomplètes."},
+ en:{q:"In a SYN Flood, why can't the victim accept new connections?",opts:["Its disk is full","Its half-open connection queue is saturated","SSH is uninstalled","Wireshark blocks packets"],exp:"The attacker fills the SYN backlog queue with incomplete connections."},
+ ans:1},
+{tp:"TP2",
+ fr:{q:"Quelle option nping choisit une adresse IP source aléatoire ?",opts:["--source-ip rand","--random-dst","--spoof mac","--rand-port"],exp:"L'option '--source-ip rand' permet d'aléatoiriser l'adresse IP source."},
+ en:{q:"Which nping option picks a random source IP address?",opts:["--source-ip rand","--random-dst","--spoof mac","--rand-port"],exp:"The '--source-ip rand' option randomises the source IP address."},
+ ans:0},
+{tp:"TP2",
+ fr:{q:"Dans nping, quelle option définit le port destination (ici Telnet) ?",opts:["-g 23","-p 23","--source-port 23","--telnet"],exp:"L'option '-p 23' définit le port destination à 23, le port de Telnet."},
+ en:{q:"In nping, which option sets the destination port (here Telnet)?",opts:["-g 23","-p 23","--source-port 23","--telnet"],exp:"The '-p 23' option sets the destination port to 23, Telnet's port."},
+ ans:1},
+{tp:"TP2",
+ fr:{q:"Dans nping, que signifie l'option -c 1 ?",opts:["Port client 1","Envoyer un seul paquet","Utiliser un seul protocole","Activer SYN cookie"],exp:"L'option '-c 1' indique d'envoyer un seul paquet."},
+ en:{q:"In nping, what does the -c 1 option mean?",opts:["Client port 1","Send a single packet","Use one protocol","Enable SYN cookie"],exp:"The '-c 1' option means send only one packet."},
+ ans:1},
+{tp:"TP2",
+ fr:{q:"Quelle commande permet de voir les connexions TCP et leurs états ?",opts:["netstat -na","openssl version","touch file","diff a b"],exp:"netstat -na affiche les connexions et leurs états comme SYN_RECV ou ESTABLISHED."},
+ en:{q:"Which command lets you see TCP connections and their states?",opts:["netstat -na","openssl version","touch file","diff a b"],exp:"netstat -na shows connections and their states such as SYN_RECV or ESTABLISHED."},
+ ans:0},
+{tp:"TP2",
+ fr:{q:"Quel état indique une connexion TCP complètement établie ?",opts:["SYN_RECV","ESTABLISHED","LISTENING_ONLY","RESETTED"],exp:"Après le handshake complet, la connexion passe à l'état ESTABLISHED."},
+ en:{q:"Which state indicates a fully established TCP connection?",opts:["SYN_RECV","ESTABLISHED","LISTENING_ONLY","RESETTED"],exp:"After the complete handshake the connection moves to ESTABLISHED state."},
+ ans:1},
+{tp:"TP2",
+ fr:{q:"Quel état correspond à un serveur en attente de connexions entrantes ?",opts:["LISTEN","CLOSED","SYN_SENT","TIMEOUT"],exp:"LISTEN indique qu'un service attend des connexions entrantes."},
+ en:{q:"Which state corresponds to a server waiting for incoming connections?",opts:["LISTEN","CLOSED","SYN_SENT","TIMEOUT"],exp:"LISTEN indicates a service is waiting for incoming connections."},
+ ans:0},
+{tp:"TP2",
+ fr:{q:"Quel service est ciblé par l'attaque SYN Flood dans TP2 ?",opts:["DNS","Telnet","SMTP","HTTP"],exp:"Le TP demande de démontrer l'attaque SYN Flood contre le protocole Telnet."},
+ en:{q:"Which service is targeted by the SYN Flood attack in TP2?",opts:["DNS","Telnet","SMTP","HTTP"],exp:"The lab asks to demonstrate the SYN Flood attack against the Telnet protocol."},
+ ans:1},
+{tp:"TP2",
+ fr:{q:"Quelle machine lance les attaques nping dans TP2 ?",opts:["server","client","attacker","CA"],exp:"Les paquets forgés sont envoyés depuis la machine attacker."},
+ en:{q:"Which machine launches nping attacks in TP2?",opts:["server","client","attacker","CA"],exp:"The forged packets are sent from the attacker machine."},
+ ans:2},
+{tp:"TP2",
+ fr:{q:"Quel outil graphique est utilisé pour observer le trafic réseau dans TP2 ?",opts:["OpenSSL","Wireshark","VirtualBox Manager","Gedit"],exp:"Wireshark est utilisé pour capturer et analyser les paquets réseau."},
+ en:{q:"Which graphical tool is used to observe network traffic in TP2?",opts:["OpenSSL","Wireshark","VirtualBox Manager","Gedit"],exp:"Wireshark is used to capture and analyse network packets."},
+ ans:1},
+{tp:"TP2",
+ fr:{q:"Pourquoi le TP suppose-t-il que l'attaquant est sur le même LAN que les victimes ?",opts:["Pour observer le trafic et les numéros TCP nécessaires","Pour éviter Docker","Pour installer OpenSSL","Pour désactiver Telnet"],exp:"Être sur le même réseau facilite l'observation des paramètres nécessaires (ports, seq, ack)."},
+ en:{q:"Why does the lab assume the attacker is on the same LAN as the victims?",opts:["To observe traffic and the required TCP numbers","To avoid Docker","To install OpenSSL","To disable Telnet"],exp:"Being on the same network makes it easier to observe the required parameters (ports, seq, ack)."},
+ ans:0},
+{tp:"TP2",
+ fr:{q:"Après un RST TCP valide, que deviennent les paquets ultérieurs de la même connexion ?",opts:["Ils sont chiffrés","Ils sont rejetés","Ils deviennent UDP","Ils créent un certificat"],exp:"Après un RST valide, la connexion est fermée et les paquets suivants sont rejetés."},
+ en:{q:"After a valid TCP RST, what happens to subsequent packets of the same connection?",opts:["They are encrypted","They are dropped","They become UDP","They create a certificate"],exp:"After a valid RST the connection is closed and subsequent packets are dropped."},
+ ans:1},
+{tp:"TP2",
+ fr:{q:"Dans la commande nping RST, quelle option indique le port source ?",opts:["-g","-p","-ack","-seq"],exp:"Dans nping, '-g' indique le port source."},
+ en:{q:"In the nping RST command, which option specifies the source port?",opts:["-g","-p","-ack","-seq"],exp:"In nping, '-g' specifies the source port."},
+ ans:0},
+{tp:"TP2",
+ fr:{q:"Dans la commande nping, quelle option indique le numéro de séquence TCP ?",opts:["-ack","-seq","-data","-flags"],exp:"L'option '-seq' permet de définir le numéro de séquence TCP."},
+ en:{q:"In nping, which option sets the TCP sequence number?",opts:["-ack","-seq","-data","-flags"],exp:"The '-seq' option sets the TCP sequence number."},
+ ans:1},
+{tp:"TP2",
+ fr:{q:"Dans la commande nping, quelle option indique le numéro d'acquittement TCP ?",opts:["-ack","-seq","-p","-g"],exp:"L'option '-ack' définit le numéro d'acquittement TCP."},
+ en:{q:"In nping, which option sets the TCP acknowledgement number?",opts:["-ack","-seq","-p","-g"],exp:"The '-ack' option sets the TCP acknowledgement number."},
+ ans:0},
+{tp:"TP2",
+ fr:{q:"Quel type de session est détourné dans la tâche TCP Session Hijacking ?",opts:["Session Telnet","Session HTTPS","Session DNS","Session OpenSSL"],exp:"La tâche demande de détourner une session Telnet existante."},
+ en:{q:"Which session type is hijacked in the TCP Session Hijacking task?",opts:["Telnet session","HTTPS session","DNS session","OpenSSL session"],exp:"The task asks to hijack an existing Telnet session."},
+ ans:0},
+{tp:"TP2",
+ fr:{q:"Quelle commande malveillante est injectée dans l'exemple de session hijacking ?",opts:["cat /etc/passwd","rm -f /home/new.txt","shutdown now","echo hello"],exp:"L'objectif est de supprimer le fichier /home/new.txt sur le serveur."},
+ en:{q:"Which malicious command is injected in the session hijacking example?",opts:["cat /etc/passwd","rm -f /home/new.txt","shutdown now","echo hello"],exp:"The goal is to delete the file /home/new.txt on the server."},
+ ans:1},
+{tp:"TP2",
+ fr:{q:"Pourquoi ajoute-t-on '0d' à la fin de la charge utile hexadécimale dans l'injection ?",opts:["Pour indiquer le retour chariot (Enter)","Pour chiffrer la commande","Pour changer le port","Pour activer SYN cookie"],exp:"0d représente un retour chariot, ce qui valide la commande dans la session Telnet."},
+ en:{q:"Why is '0d' appended to the hex payload during injection?",opts:["To indicate carriage return (Enter)","To encrypt the command","To change the port","To enable SYN cookie"],exp:"0d represents a carriage return, which executes the command in the Telnet session."},
+ ans:0},
+{tp:"TP2",
+ fr:{q:"Quels drapeaux TCP sont utilisés pour injecter des données dans une session établie ?",opts:["SYN seulement","RST seulement","ACK/PSH selon le cas","FIN seulement"],exp:"L'injection de données dans une session établie utilise généralement ACK et souvent PSH."},
+ en:{q:"Which TCP flags are used to inject data into an established session?",opts:["SYN only","RST only","ACK/PSH as needed","FIN only"],exp:"Injecting data into an established session typically uses ACK and often PSH."},
+ ans:2},
+{tp:"TP2",
+ fr:{q:"Dans Wireshark, pourquoi désactiver les numéros de séquence relatifs ?",opts:["Pour voir les vrais numéros requis par nping","Pour chiffrer la capture","Pour masquer les ports","Pour filtrer Telnet"],exp:"nping nécessite les valeurs réelles de sequence/ACK, pas les valeurs relatives affichées par défaut."},
+ en:{q:"In Wireshark, why disable relative sequence numbers?",opts:["To see the real numbers required by nping","To encrypt the capture","To hide ports","To filter Telnet"],exp:"nping requires real sequence/ACK values, not the relative values displayed by default."},
+ ans:0},
+{tp:"TP2",
+ fr:{q:"Quelle commande affiche l'état des SYN cookies sur le serveur ?",opts:["sudo sysctl -a | grep cookie","netstat cookie","tcpdump cookie","openssl cookie"],exp:"La commande 'sudo sysctl -a | grep cookie' affiche l'état des paramètres liés aux cookies."},
+ en:{q:"Which command shows the SYN cookie state on the server?",opts:["sudo sysctl -a | grep cookie","netstat cookie","tcpdump cookie","openssl cookie"],exp:"'sudo sysctl -a | grep cookie' displays the state of cookie-related parameters."},
+ ans:0},
+{tp:"TP2",
+ fr:{q:"Quelle commande vide les métriques TCP mémorisées ?",opts:["sudo ip tcp_metrics flush","sudo sysctl flush","netstat -flush","tcpdump -clear"],exp:"Le TP utilise 'sudo ip tcp_metrics flush' pour vider la mémoire des connexions précédentes."},
+ en:{q:"Which command flushes memorised TCP metrics?",opts:["sudo ip tcp_metrics flush","sudo sysctl flush","netstat -flush","tcpdump -clear"],exp:"The lab uses 'sudo ip tcp_metrics flush' to clear the memory of previous connections."},
+ ans:0},
+{tp:"TP2",
+ fr:{q:"Quel service tourne sur le serveur en plus de telnet dans TP2 ?",opts:["FTP","SSH","DNS","HTTP"],exp:"Le serveur exécute les services telnet et SSH selon le TP."},
+ en:{q:"Which service runs on the server in addition to telnet in TP2?",opts:["FTP","SSH","DNS","HTTP"],exp:"The server runs both telnet and SSH services according to the lab."},
+ ans:1},
+{tp:"TP2",
+ fr:{q:"Quelle adresse IP correspond à la machine client dans la topologie TP2 ?",opts:["172.25.0.2","172.25.0.3","172.25.29.4","192.168.1.1"],exp:"D'après la figure 2, l'adresse du client est 172.25.0.3."},
+ en:{q:"Which IP address corresponds to the client machine in the TP2 topology?",opts:["172.25.0.2","172.25.0.3","172.25.29.4","192.168.1.1"],exp:"According to figure 2, the client's address is 172.25.0.3."},
+ ans:1},
+{tp:"TP2",
+ fr:{q:"Pour lancer le TP2, quelle commande Labtainers utilise-t-on ?",opts:["labtainer telnetlab","labtainer tcpip","labtainer synflood","labtainer rsa"],exp:"La commande est 'labtainer tcpip' comme indiqué dans la section 1 du TP2."},
+ en:{q:"To start TP2, which Labtainers command is used?",opts:["labtainer telnetlab","labtainer tcpip","labtainer synflood","labtainer rsa"],exp:"The command is 'labtainer tcpip' as stated in section 1 of TP2."},
+ ans:1},
+{tp:"TP2",
+ fr:{q:"Quelle commande réduit la taille du backlog SYN à 5 dans le TP2 ?",opts:["sysctl -w net.ipv4.tcp_max_syn_backlog=5","iptables --limit 5","netstat --backlog 5","tcp set backlog 5"],exp:"La commande 'sudo sysctl -w net.ipv4.tcp_max_syn_backlog=5' réduit le backlog à 5 connexions."},
+ en:{q:"Which command reduces the SYN backlog size to 5 in TP2?",opts:["sysctl -w net.ipv4.tcp_max_syn_backlog=5","iptables --limit 5","netstat --backlog 5","tcp set backlog 5"],exp:"'sudo sysctl -w net.ipv4.tcp_max_syn_backlog=5' reduces the backlog to 5 connections."},
+ ans:0},
+{tp:"TP2",
+ fr:{q:"Quel fichier le TCP Session Hijacking cherche-t-il à supprimer sur le serveur ?",opts:["/home/new.txt","~/filetoview.txt","/etc/passwd","/tmp/secret.key"],exp:"L'objectif est de supprimer ~/home/new.txt (ou /home/new.txt) sur le serveur via l'injection."},
+ en:{q:"Which file does the TCP Session Hijacking task aim to delete on the server?",opts:["/home/new.txt","~/filetoview.txt","/etc/passwd","/tmp/secret.key"],exp:"The goal is to delete ~/home/new.txt (or /home/new.txt) on the server via injection."},
+ ans:0},
+
+/* ─── TP3 ─── */
+{tp:"TP3",
+ fr:{q:"Qu'est-ce qu'OpenSSL ?",opts:["Un antivirus open source","Une bibliothèque cryptographique implémentant SSL/TLS","Un pare-feu réseau","Un gestionnaire de certificats Windows"],exp:"OpenSSL est une bibliothèque cryptographique open source qui implémente SSL, TLS et de nombreux algorithmes de chiffrement."},
+ en:{q:"What is OpenSSL?",opts:["An open-source antivirus","A cryptographic library implementing SSL/TLS","A network firewall","A Windows certificate manager"],exp:"OpenSSL is an open-source cryptographic library that implements SSL, TLS, and many encryption algorithms."},
+ ans:1},
+{tp:"TP3",
+ fr:{q:"Quelle commande OpenSSL chiffre un fichier avec l'algorithme DES3 ?",opts:["openssl enc -e -des3 -in message -out message.enc","openssl des3 -encrypt message","openssl -cipher des3 message","openssl enc -des3 -encrypt message"],exp:"La syntaxe correcte est 'openssl enc -e -des3 -in <clair> -out <chiffré>'."},
+ en:{q:"Which OpenSSL command encrypts a file with the DES3 algorithm?",opts:["openssl enc -e -des3 -in message -out message.enc","openssl des3 -encrypt message","openssl -cipher des3 message","openssl enc -des3 -encrypt message"],exp:"The correct syntax is 'openssl enc -e -des3 -in <plain> -out <encrypted>'."},
+ ans:0},
+{tp:"TP3",
+ fr:{q:"Quelle option OpenSSL produit un fichier chiffré lisible en Base64 ?",opts:["-b64","-hex","-a","-text"],exp:"L'option '-a' encode le résultat en Base64, rendant le fichier chiffré lisible comme texte."},
+ en:{q:"Which OpenSSL option produces a Base64-readable encrypted file?",opts:["-b64","-hex","-a","-text"],exp:"The '-a' option encodes the result in Base64, making the encrypted file readable as text."},
+ ans:2},
+{tp:"TP3",
+ fr:{q:"Quelle commande Linux vérifie que deux fichiers ont le même contenu ?",opts:["cmp","diff","checksum","md5sum"],exp:"'diff fichier1 fichier2' affiche les différences. Une sortie vide confirme l'identité des fichiers."},
+ en:{q:"Which Linux command verifies that two files have the same content?",opts:["cmp","diff","checksum","md5sum"],exp:"'diff file1 file2' shows differences. Empty output confirms the files are identical."},
+ ans:1},
+{tp:"TP3",
+ fr:{q:"Quelle commande OpenSSL génère une clé symétrique aléatoire de 512 bits ?",opts:["openssl genkey -rand 512","openssl rand -out Key 512","openssl key -size 512","openssl symmetric -gen 512"],exp:"'openssl rand -out Key 512' génère 512 octets aléatoires et les sauvegarde dans le fichier Key."},
+ en:{q:"Which OpenSSL command generates a random 512-bit symmetric key?",opts:["openssl genkey -rand 512","openssl rand -out Key 512","openssl key -size 512","openssl symmetric -gen 512"],exp:"'openssl rand -out Key 512' generates 512 random bytes and saves them to the file Key."},
+ ans:1},
+{tp:"TP3",
+ fr:{q:"Quel algorithme symétrique est utilisé avec 'openssl aes-256-cbc' ?",opts:["DES","3DES","AES-256 en mode CBC","RC4"],exp:"AES-256-CBC désigne l'algorithme AES avec une clé de 256 bits en mode Cipher Block Chaining."},
+ en:{q:"Which symmetric algorithm is used with 'openssl aes-256-cbc'?",opts:["DES","3DES","AES-256 in CBC mode","RC4"],exp:"AES-256-CBC refers to AES with a 256-bit key in Cipher Block Chaining mode."},
+ ans:2},
+{tp:"TP3",
+ fr:{q:"Quelle commande génère une clé privée RSA de 1024 bits ?",opts:["openssl rsa -new 1024","openssl genrsa -out Key.priv 1024","openssl keygen -rsa 1024","openssl req -rsa 1024"],exp:"'openssl genrsa -out Key.priv 1024' génère une clé privée RSA de 1024 bits."},
+ en:{q:"Which command generates a 1024-bit RSA private key?",opts:["openssl rsa -new 1024","openssl genrsa -out Key.priv 1024","openssl keygen -rsa 1024","openssl req -rsa 1024"],exp:"'openssl genrsa -out Key.priv 1024' generates a 1024-bit RSA private key."},
+ ans:1},
+{tp:"TP3",
+ fr:{q:"Comment chiffrer une clé privée RSA avec DES3 dans OpenSSL ?",opts:["openssl enc -des3 -in Key.priv","openssl rsa -in Key.priv -des3 -out Key.pem","openssl encrypt -des3 Key.priv","openssl rsa -encrypt -des3 Key.priv"],exp:"'openssl rsa -in Key.priv -des3 -out Key.pem' chiffre la clé privée avec DES3 et la sauvegarde en PEM."},
+ en:{q:"How do you encrypt an RSA private key with DES3 in OpenSSL?",opts:["openssl enc -des3 -in Key.priv","openssl rsa -in Key.priv -des3 -out Key.pem","openssl encrypt -des3 Key.priv","openssl rsa -encrypt -des3 Key.priv"],exp:"'openssl rsa -in Key.priv -des3 -out Key.pem' encrypts the private key with DES3 and saves it in PEM format."},
+ ans:1},
+{tp:"TP3",
+ fr:{q:"Quelle commande extrait la clé publique à partir d'une clé privée RSA ?",opts:["openssl rsa -in Key.priv -public -out Key.pub","openssl rsa -in Key.priv -pubout -out Key.pub","openssl genrsa -pubout Key.priv","openssl req -pubkey Key.priv"],exp:"'openssl rsa -in Key.priv -pubout -out Key.pub' génère la clé publique correspondante."},
+ en:{q:"Which command extracts the public key from an RSA private key?",opts:["openssl rsa -in Key.priv -public -out Key.pub","openssl rsa -in Key.priv -pubout -out Key.pub","openssl genrsa -pubout Key.priv","openssl req -pubkey Key.priv"],exp:"'openssl rsa -in Key.priv -pubout -out Key.pub' generates the corresponding public key."},
+ ans:1},
+{tp:"TP3",
+ fr:{q:"Dans la PKI du TP3, quel fichier contient la liste des certificats créés ?",opts:["serial","database.db","index.txt","certs.log"],exp:"Le fichier 'index.txt' dans /etc/activite contient l'index de tous les certificats créés."},
+ en:{q:"In the TP3 PKI, which file contains the list of created certificates?",opts:["serial","database.db","index.txt","certs.log"],exp:"The file 'index.txt' in /etc/activite contains the index of all created certificates."},
+ ans:2},
+{tp:"TP3",
+ fr:{q:"Quelle est la durée de validité du certificat CA auto-signé dans TP3 ?",opts:["1 an (365 jours)","2 ans (730 jours)","4 ans (1460 jours)","10 ans (3650 jours)"],exp:"Le certificat CA est généré avec '-days 1460' soit 365 × 4 = 1460 jours (4 ans)."},
+ en:{q:"What is the validity period of the self-signed CA certificate in TP3?",opts:["1 year (365 days)","2 years (730 days)","4 years (1460 days)","10 years (3650 days)"],exp:"The CA certificate is generated with '-days 1460', i.e. 365 × 4 = 1460 days (4 years)."},
+ ans:2},
+{tp:"TP3",
+ fr:{q:"Quelle commande chiffre un fichier avec la clé publique d'un certificat RSA ?",opts:["openssl rsautl -encrypt -in f.txt -inkey cert.pem -certin -out f.enc","openssl enc -rsa -pubkey cert.pem -in f.txt","openssl rsa -encrypt -cert cert.pem f.txt","openssl pkcs -encrypt cert.pem f.txt"],exp:"'openssl rsautl -encrypt -inkey <cert> -certin -in <fichier> -out <sortie>' chiffre avec la clé publique du certificat."},
+ en:{q:"Which command encrypts a file with the public key of an RSA certificate?",opts:["openssl rsautl -encrypt -in f.txt -inkey cert.pem -certin -out f.enc","openssl enc -rsa -pubkey cert.pem -in f.txt","openssl rsa -encrypt -cert cert.pem f.txt","openssl pkcs -encrypt cert.pem f.txt"],exp:"'openssl rsautl -encrypt -inkey <cert> -certin -in <file> -out <output>' encrypts with the certificate's public key."},
+ ans:0},
+{tp:"TP3",
+ fr:{q:"Quelle commande déchiffre un fichier RSA en utilisant la clé privée ?",opts:["openssl rsautl -decrypt -in f.enc -inkey Key.priv -out f.dec","openssl rsa -d -in f.enc -key Key.priv","openssl enc -d -rsa -in f.enc -key Key.priv","openssl pkcs -decrypt Key.priv f.enc"],exp:"'openssl rsautl -decrypt -inkey <clé_privée> -in <chiffré> -out <déchiffré>' déchiffre avec RSA."},
+ en:{q:"Which command decrypts an RSA-encrypted file using the private key?",opts:["openssl rsautl -decrypt -in f.enc -inkey Key.priv -out f.dec","openssl rsa -d -in f.enc -key Key.priv","openssl enc -d -rsa -in f.enc -key Key.priv","openssl pkcs -decrypt Key.priv f.enc"],exp:"'openssl rsautl -decrypt -inkey <private_key> -in <encrypted> -out <decrypted>' decrypts with RSA."},
+ ans:0},
+{tp:"TP3",
+ fr:{q:"Quelle commande vérifie la validité d'un certificat client par rapport au CA ?",opts:["openssl check -CAfile cacerts/ca.pem certs/client.pem","openssl verify -CAfile cacerts/ia4cacert.pem certs/ClientAcertificate.pem","openssl ca -verify certs/ClientAcertificate.pem","openssl x509 -check certs/ClientAcertificate.pem"],exp:"'openssl verify -CAfile <cert_CA> <cert_client>' vérifie que le certificat est signé par ce CA."},
+ en:{q:"Which command verifies a client certificate against the CA?",opts:["openssl check -CAfile cacerts/ca.pem certs/client.pem","openssl verify -CAfile cacerts/ia4cacert.pem certs/ClientAcertificate.pem","openssl ca -verify certs/ClientAcertificate.pem","openssl x509 -check certs/ClientAcertificate.pem"],exp:"'openssl verify -CAfile <CA_cert> <client_cert>' verifies that the certificate is signed by that CA."},
+ ans:1},
+{tp:"TP3",
+ fr:{q:"Quel format de fichier est standard pour les clés et certificats dans OpenSSL ?",opts:["DER","PEM","CRT","KEY"],exp:"Le format PEM (Privacy Enhanced Mail) est le format texte base64 standard utilisé dans OpenSSL."},
+ en:{q:"Which file format is standard for keys and certificates in OpenSSL?",opts:["DER","PEM","CRT","KEY"],exp:"The PEM (Privacy Enhanced Mail) format is the standard base64 text format used in OpenSSL."},
+ ans:1},
+{tp:"TP3",
+ fr:{q:"Quelle commande vérifie la cohérence d'une clé privée RSA ?",opts:["openssl rsa -in Key.priv -check","openssl verify Key.priv","openssl enc -check Key.priv","openssl ca -check Key.priv"],exp:"'openssl rsa -in Key.priv -check' vérifie la cohérence de la clé privée RSA."},
+ en:{q:"Which command checks the consistency of an RSA private key?",opts:["openssl rsa -in Key.priv -check","openssl verify Key.priv","openssl enc -check Key.priv","openssl ca -check Key.priv"],exp:"'openssl rsa -in Key.priv -check' verifies the consistency of the RSA private key."},
+ ans:0},
+{tp:"TP3",
+ fr:{q:"Quelle commande affiche le modulus d'une clé RSA ?",opts:["openssl rsa -in Key.priv -modulus","openssl modulus Key.priv","openssl genrsa -modulus","openssl x509 -rsa"],exp:"L'option '-modulus' avec openssl rsa affiche le modulus de la clé RSA."},
+ en:{q:"Which command displays the modulus of an RSA key?",opts:["openssl rsa -in Key.priv -modulus","openssl modulus Key.priv","openssl genrsa -modulus","openssl x509 -rsa"],exp:"The '-modulus' option with openssl rsa displays the RSA key modulus."},
+ ans:0},
+{tp:"TP3",
+ fr:{q:"Le fichier Key.pem dans TP3 correspond à quoi ?",opts:["Une clé privée chiffrée avec DES3","Un fichier Telnet","Une capture Wireshark","Un script Python"],exp:"Key.pem est obtenu en chiffrant Key.priv avec DES3."},
+ en:{q:"What does the file Key.pem represent in TP3?",opts:["A private key encrypted with DES3","A Telnet file","A Wireshark capture","A Python script"],exp:"Key.pem is obtained by encrypting Key.priv with DES3."},
+ ans:0},
+{tp:"TP3",
+ fr:{q:"Dans le chiffrement asymétrique RSA, quelle clé est utilisée pour chiffrer ?",opts:["La clé publique du destinataire","La clé privée de l'expéditeur","La clé symétrique RC4","Le fichier index.txt"],exp:"Le chiffrement asymétrique utilise la clé publique du destinataire, souvent extraite du certificat."},
+ en:{q:"In RSA asymmetric encryption, which key is used to encrypt?",opts:["The recipient's public key","The sender's private key","The RC4 symmetric key","The index.txt file"],exp:"Asymmetric encryption uses the recipient's public key, often extracted from the certificate."},
+ ans:0},
+{tp:"TP3",
+ fr:{q:"Dans le chiffrement asymétrique RSA, quelle clé est utilisée pour déchiffrer ?",opts:["La clé publique","La clé privée correspondante","Le certificat CA uniquement","Le fichier serial"],exp:"Seule la clé privée associée à la clé publique peut déchiffrer les données RSA."},
+ en:{q:"In RSA asymmetric encryption, which key is used to decrypt?",opts:["The public key","The corresponding private key","The CA certificate only","The serial file"],exp:"Only the private key associated with the public key can decrypt RSA data."},
+ ans:1},
+{tp:"TP3",
+ fr:{q:"Dans openssl.cnf, quelle section contient les paramètres principaux du CA ?",opts:["[ CA_default ]","[ tcp_default ]","[ telnet ]","[ wireshark ]"],exp:"La section [ CA_default ] définit les chemins des certificats, clés, base de données et serial."},
+ en:{q:"In openssl.cnf, which section contains the main CA parameters?",opts:["[ CA_default ]","[ tcp_default ]","[ telnet ]","[ wireshark ]"],exp:"The [ CA_default ] section defines paths for certificates, keys, database, and serial."},
+ ans:0},
+{tp:"TP3",
+ fr:{q:"Dans la PKI du TP3, quel fichier contient le prochain numéro de série ?",opts:["index.txt","serial","privatekey.pem","new.txt"],exp:"Le fichier 'serial' contient le prochain numéro de série utilisé pour émettre un certificat."},
+ en:{q:"In the TP3 PKI, which file holds the next serial number?",opts:["index.txt","serial","privatekey.pem","new.txt"],exp:"The 'serial' file contains the next serial number used to issue a certificate."},
+ ans:1},
+{tp:"TP3",
+ fr:{q:"Quel répertoire contient les clés privées RSA dans /etc/activite ?",opts:["certs","reqs","private","crl"],exp:"Le répertoire 'private' est prévu pour stocker les clés privées."},
+ en:{q:"Which directory holds RSA private keys in /etc/activite?",opts:["certs","reqs","private","crl"],exp:"The 'private' directory is intended to store private keys."},
+ ans:2},
+{tp:"TP3",
+ fr:{q:"Quel répertoire contient les demandes de certificats (CSR) dans /etc/activite ?",opts:["reqs","private","cacerts","newcerts"],exp:"Le répertoire 'reqs' contient les requêtes de certificat X.509."},
+ en:{q:"Which directory holds certificate signing requests (CSR) in /etc/activite?",opts:["reqs","private","cacerts","newcerts"],exp:"The 'reqs' directory contains X.509 certificate requests."},
+ ans:0},
+{tp:"TP3",
+ fr:{q:"Quel répertoire contient les certificats CA fiables dans /etc/activite ?",opts:["private","cacerts","reqs","tmp"],exp:"Le répertoire 'cacerts' est utilisé pour les certificats de l'autorité de certification."},
+ en:{q:"Which directory holds trusted CA certificates in /etc/activite?",opts:["private","cacerts","reqs","tmp"],exp:"The 'cacerts' directory is used for CA certificates."},
+ ans:1},
+{tp:"TP3",
+ fr:{q:"Quelle commande génère la clé privée du CA (DES3, 2048 bits) dans TP3 ?",opts:["openssl genrsa -des3 -out private/ia4cakey.pem 2048","openssl rsa -pubout 2048","openssl enc -rsa 2048","openssl ca -newkey"],exp:"La commande génère la clé privée du CA avec DES3 et 2048 bits."},
+ en:{q:"Which command generates the CA private key (DES3, 2048-bit) in TP3?",opts:["openssl genrsa -des3 -out private/ia4cakey.pem 2048","openssl rsa -pubout 2048","openssl enc -rsa 2048","openssl ca -newkey"],exp:"This command generates the CA private key with DES3 and 2048 bits."},
+ ans:0},
+{tp:"TP3",
+ fr:{q:"Quelle commande génère le certificat CA auto-signé dans TP3 ?",opts:["openssl req -new -x509 -days 1460 -key private/ia4cakey.pem -out cacerts/ia4cacert.pem","openssl genrsa -x509","openssl verify -x509","openssl enc -x509"],exp:"'openssl req -new -x509' crée un certificat auto-signé à partir de la clé privée CA."},
+ en:{q:"Which command generates the self-signed CA certificate in TP3?",opts:["openssl req -new -x509 -days 1460 -key private/ia4cakey.pem -out cacerts/ia4cacert.pem","openssl genrsa -x509","openssl verify -x509","openssl enc -x509"],exp:"'openssl req -new -x509' creates a self-signed certificate from the CA private key."},
+ ans:0},
+{tp:"TP3",
+ fr:{q:"Dans une requête de certificat client, quel champ peut contenir 'ClientA' ?",opts:["Common Name","Serial Number","Private Key","Backlog"],exp:"Le TP demande de saisir ClientA dans le champ Common Name."},
+ en:{q:"In a client certificate request, which field can contain 'ClientA'?",opts:["Common Name","Serial Number","Private Key","Backlog"],exp:"The lab asks to enter ClientA in the Common Name field."},
+ ans:0},
+{tp:"TP3",
+ fr:{q:"Quelle commande signe la requête du client A avec le CA ?",opts:["openssl ca -in reqs/ClientArequest.pem -out certs/ClientAcertificate.pem","openssl enc -in ClientArequest.pem","openssl genrsa ClientArequest.pem","openssl verify -sign ClientA"],exp:"La commande 'openssl ca' signe la requête CSR et produit le certificat client."},
+ en:{q:"Which command signs client A's request with the CA?",opts:["openssl ca -in reqs/ClientArequest.pem -out certs/ClientAcertificate.pem","openssl enc -in ClientArequest.pem","openssl genrsa ClientArequest.pem","openssl verify -sign ClientA"],exp:"The 'openssl ca' command signs the CSR and produces the client certificate."},
+ ans:0},
+{tp:"TP3",
+ fr:{q:"RC4 est quel type d'algorithme dans le TP3 ?",opts:["Chiffrement symétrique","Chiffrement asymétrique","Fonction de hachage","Certificat numérique"],exp:"RC4 est utilisé comme algorithme de chiffrement symétrique dans la partie OpenSSL."},
+ en:{q:"What type of algorithm is RC4 in TP3?",opts:["Symmetric encryption","Asymmetric encryption","Hash function","Digital certificate"],exp:"RC4 is used as a symmetric encryption algorithm in the OpenSSL section."},
+ ans:0},
+{tp:"TP3",
+ fr:{q:"AES-256-CBC utilise une clé de quelle taille ?",opts:["56 bits","128 bits","256 bits","1024 bits"],exp:"AES-256 signifie AES avec clé de 256 bits ; CBC est le mode d'opération."},
+ en:{q:"AES-256-CBC uses a key of which size?",opts:["56 bits","128 bits","256 bits","1024 bits"],exp:"AES-256 means AES with a 256-bit key; CBC is the operating mode."},
+ ans:2},
+{tp:"TP3",
+ fr:{q:"Quelle commande vérifie la version d'OpenSSL installée ?",opts:["openssl version","openssl check","openssl --install","ssl version"],exp:"'openssl version' ou 'openssl version -a' affiche la version d'OpenSSL."},
+ en:{q:"Which command checks the installed OpenSSL version?",opts:["openssl version","openssl check","openssl --install","ssl version"],exp:"'openssl version' or 'openssl version -a' displays the OpenSSL version."},
+ ans:0},
+{tp:"TP3",
+ fr:{q:"Quelle option openssl enc signifie chiffrement ?",opts:["-d","-e","-a","-x"],exp:"L'option '-e' signifie encrypt (chiffrer)."},
+ en:{q:"Which openssl enc option means encryption?",opts:["-d","-e","-a","-x"],exp:"The '-e' option means encrypt."},
+ ans:1},
+{tp:"TP3",
+ fr:{q:"Quelle option openssl enc signifie déchiffrement ?",opts:["-d","-e","-r","-p"],exp:"L'option '-d' signifie decrypt (déchiffrer)."},
+ en:{q:"Which openssl enc option means decryption?",opts:["-d","-e","-r","-p"],exp:"The '-d' option means decrypt."},
+ ans:0},
+{tp:"TP3",
+ fr:{q:"Que signifie une sortie vide de la commande diff entre deux fichiers ?",opts:["Les fichiers sont différents","Les fichiers sont identiques","OpenSSL est absent","Le fichier est chiffré"],exp:"Avec diff, aucune sortie signifie qu'aucune différence n'a été détectée : les fichiers sont identiques."},
+ en:{q:"What does an empty diff output between two files mean?",opts:["The files are different","The files are identical","OpenSSL is missing","The file is encrypted"],exp:"With diff, no output means no differences were found: the files are identical."},
+ ans:1},
+{tp:"TP3",
+ fr:{q:"Pourquoi le contenu de message.enc peut sembler illisible sans l'option -a ?",opts:["Il est en binaire/chiffré","Il est supprimé","Il est en français","Il est une clé publique"],exp:"Le résultat chiffré brut peut contenir des octets non imprimables, donc illisible sans Base64."},
+ en:{q:"Why can message.enc appear unreadable without the -a option?",opts:["It is binary/encrypted","It is deleted","It is in French","It is a public key"],exp:"The raw encrypted output can contain non-printable bytes, making it unreadable without Base64 encoding."},
+ ans:0},
+{tp:"TP3",
+ fr:{q:"Quelle commande installe OpenSSL sur Ubuntu si absent ?",opts:["apt install openssl","yum install openssl","pip install openssl","brew install openssl"],exp:"Sur Ubuntu/Debian la commande est 'sudo apt install openssl'."},
+ en:{q:"Which command installs OpenSSL on Ubuntu if missing?",opts:["apt install openssl","yum install openssl","pip install openssl","brew install openssl"],exp:"On Ubuntu/Debian the command is 'sudo apt install openssl'."},
+ ans:0},
+{tp:"TP3",
+ fr:{q:"Quelle commande affiche le chemin d'installation d'OpenSSL ?",opts:["where openssl","which openssl","path openssl","findssl"],exp:"La commande 'which openssl' affiche le chemin de l'exécutable OpenSSL."},
+ en:{q:"Which command displays the installation path of OpenSSL?",opts:["where openssl","which openssl","path openssl","findssl"],exp:"The command 'which openssl' shows the path of the OpenSSL executable."},
+ ans:1},
+{tp:"TP3",
+ fr:{q:"Quel répertoire /etc/activite contient les nouveaux certificats émis ?",opts:["private","newcerts","reqs","crl"],exp:"Le répertoire 'newcerts' est configuré comme emplacement par défaut pour les nouveaux certificats."},
+ en:{q:"Which /etc/activite directory holds newly issued certificates?",opts:["private","newcerts","reqs","crl"],exp:"The 'newcerts' directory is configured as the default location for new certificates."},
+ ans:1},
+{tp:"TP3",
+ fr:{q:"Quelle est la taille de la clé RSA générée pour le CA dans TP3 ?",opts:["1024 bits","2048 bits","4096 bits","512 bits"],exp:"La commande du TP génère la clé CA avec 2048 bits."},
+ en:{q:"What is the RSA key size generated for the CA in TP3?",opts:["1024 bits","2048 bits","4096 bits","512 bits"],exp:"The lab command generates the CA key with 2048 bits."},
+ ans:1},
+
+/* ─── MIXED ─── */
+{tp:"Mixed",
+ fr:{q:"Quel couple port / protocole est correct ?",opts:["Telnet=22, SSH=23","Telnet=23, SSH=22","Telnet=80, SSH=443","Telnet=53, SSH=25"],exp:"Telnet utilise le port TCP 23, SSH utilise le port TCP 22."},
+ en:{q:"Which port / protocol pair is correct?",opts:["Telnet=22, SSH=23","Telnet=23, SSH=22","Telnet=80, SSH=443","Telnet=53, SSH=25"],exp:"Telnet uses TCP port 23, SSH uses TCP port 22."},
+ ans:1},
+{tp:"Mixed",
+ fr:{q:"Quel outil correspond à l'analyse graphique des paquets réseau ?",opts:["Wireshark","OpenSSL","diff","touch"],exp:"Wireshark est l'analyseur graphique de paquets utilisé dans TP2."},
+ en:{q:"Which tool is used for graphical network packet analysis?",opts:["Wireshark","OpenSSL","diff","touch"],exp:"Wireshark is the graphical packet analyser used in TP2."},
+ ans:0},
+{tp:"Mixed",
+ fr:{q:"Quel outil permet de créer des paquets TCP/IP forgés en ligne de commande ?",opts:["nping","diff","cat","openssl verify"],exp:"nping permet de créer et envoyer des paquets personnalisés avec flags, ports, séquences, etc."},
+ en:{q:"Which command-line tool creates custom TCP/IP packets?",opts:["nping","diff","cat","openssl verify"],exp:"nping creates and sends custom packets with flags, ports, sequence numbers, etc."},
+ ans:0},
+{tp:"Mixed",
+ fr:{q:"Quel outil correspond à la cryptographie et aux certificats numériques ?",opts:["OpenSSL","tcpdump","netstat","ifconfig"],exp:"OpenSSL fournit les commandes de chiffrement, RSA, certificats et vérification."},
+ en:{q:"Which tool handles cryptography and digital certificates?",opts:["OpenSSL","tcpdump","netstat","ifconfig"],exp:"OpenSSL provides commands for encryption, RSA, certificates, and verification."},
+ ans:0},
+{tp:"Mixed",
+ fr:{q:"Quel protocole transmet les données en clair et est donc vulnérable ?",opts:["SSH","Telnet","TLS","HTTPS"],exp:"Telnet ne chiffre pas ses données et est observable dans une capture réseau."},
+ en:{q:"Which protocol transmits data in clear text and is therefore vulnerable?",opts:["SSH","Telnet","TLS","HTTPS"],exp:"Telnet does not encrypt its data and is visible in a network capture."},
+ ans:1},
+{tp:"Mixed",
+ fr:{q:"Dans quel TP utilise-t-on Wireshark pour relever les seq/ack nécessaires aux attaques ?",opts:["TP1","TP2","TP3","Aucun"],exp:"Dans TP2, Wireshark est utilisé pour observer le trafic et relever seq/ack/port pour les attaques."},
+ en:{q:"In which lab is Wireshark used to gather seq/ack values for attacks?",opts:["TP1","TP2","TP3","None"],exp:"In TP2, Wireshark is used to observe traffic and gather seq/ack/port values for attacks."},
+ ans:1},
+{tp:"Mixed",
+ fr:{q:"Quelle est la commande pour lancer le TP TCP attacks dans Labtainers ?",opts:["labtainer telnetlab","labtainer tcpip","labtainer openssl","labtainer rsa"],exp:"La commande est 'labtainer tcpip' comme indiqué dans le TP2."},
+ en:{q:"What is the command to launch the TCP attacks lab in Labtainers?",opts:["labtainer telnetlab","labtainer tcpip","labtainer openssl","labtainer rsa"],exp:"The command is 'labtainer tcpip' as stated in TP2."},
+ ans:1},
+{tp:"Mixed",
+ fr:{q:"Lequel de ces algorithmes est asymétrique ?",opts:["DES","AES","RC4","RSA"],exp:"RSA est un algorithme de chiffrement asymétrique basé sur la factorisation de grands nombres."},
+ en:{q:"Which of these algorithms is asymmetric?",opts:["DES","AES","RC4","RSA"],exp:"RSA is an asymmetric encryption algorithm based on factoring large numbers."},
+ ans:3},
+{tp:"Mixed",
+ fr:{q:"Lequel de ces algorithmes est symétrique ?",opts:["RSA","ECC","DH","AES"],exp:"AES (Advanced Encryption Standard) est un algorithme de chiffrement symétrique."},
+ en:{q:"Which of these algorithms is symmetric?",opts:["RSA","ECC","DH","AES"],exp:"AES (Advanced Encryption Standard) is a symmetric encryption algorithm."},
+ ans:3},
+{tp:"Mixed",
+ fr:{q:"Quel TP couvre principalement OpenSSL et la PKI ?",opts:["TP1","TP2","TP3","Aucun"],exp:"TP3 est entièrement consacré à OpenSSL pour le chiffrement symétrique/asymétrique et les certificats."},
+ en:{q:"Which lab mainly covers OpenSSL and PKI?",opts:["TP1","TP2","TP3","None"],exp:"TP3 is entirely dedicated to OpenSSL for symmetric/asymmetric encryption and certificates."},
+ ans:2},
+];
+
+/* ═══════════════════════════════════════════
+   STATE & SETTINGS
+═══════════════════════════════════════════ */
+const TIMER = 30;
+const LETTERS = ['A','B','C','D','E'];
+let lang = localStorage.getItem('ia4_lang') || 'fr';
+let dark = localStorage.getItem('ia4_dark') || '0';
+let state = JSON.parse(localStorage.getItem('ia4_v4') || '{}');
+let order = Q.map((_,i)=>i);
+let shown = [...order];
+let pos = 0;
+let mapOpen = false;
+let tid = null, tLeft = TIMER;
+
+if(dark==='1') document.documentElement.setAttribute('data-dark','1');
+
+/* ═══════════════════════════════════════════
+   i18n STRINGS
+═══════════════════════════════════════════ */
+const T = {
+  fr:{
+    brandTitle:'IA4 Security QCM', brandSub:'Sécurité Informatique · TP1 · TP2 · TP3',
+    correct:'Correctes', wrong:'Erreurs', answered:'Répondues', left:'Restantes',
+    shuffle:'Mélanger', random:'Aléatoire', reset:'↺ Reset',
+    mapHd:'Carte des questions — cliquez pour naviguer',
+    legOk:'Correcte', legBad:'Erreur', legSkip:'Passée', legBlank:'Non répondue',
+    prev:'← Précédent', next:'Suivant →', skip:'Passer', rnd:'🎲',
+    fbOk:'✅ Bonne réponse !', fbBad:'❌ Incorrect — Bonne réponse :',
+    fbSkip:'⏭ Passée — Bonne réponse :', fbSkipAuto:'⏱ Temps écoulé — Bonne réponse :',
+    resMsg:['Excellent ! Tu es prêt pour l\'examen.','Bon résultat, encore un peu de révision !','Continue à réviser, tu y arriveras !'],
+    resOk:'Correctes', resBad:'Erreurs', resSkip:'Passées',
+    tpHd:'Résultats par TP',
+    restart:'🔄 Tout recommencer', reviewW:'❌ Réviser erreurs', reviewS:'⏭ Réviser passées',
+    hint:'← → naviguer · A B C D répondre · S passer',
+    filters:['📚 Toutes les questions','📡 TP1 — Telnet / Labtainer','⚔️ TP2 — Attaques TCP','🔐 TP3 — OpenSSL / PKI','🔀 Mixed','❌ Erreurs seulement','⏭ Passées seulement'],
+    filterVals:['all','TP1','TP2','TP3','Mixed','wrong','skipped'],
+    noQ:'Aucune question ne correspond. Essayez un autre filtre.',
+    langSwitch:'🌐 EN',
+  },
+  en:{
+    brandTitle:'IA4 Security QCM', brandSub:'Computer Security · TP1 · TP2 · TP3',
+    correct:'Correct', wrong:'Wrong', answered:'Answered', left:'Remaining',
+    shuffle:'Shuffle', random:'Random', reset:'↺ Reset',
+    mapHd:'Question map — click to navigate',
+    legOk:'Correct', legBad:'Wrong', legSkip:'Skipped', legBlank:'Unanswered',
+    prev:'← Back', next:'Next →', skip:'Skip', rnd:'🎲',
+    fbOk:'✅ Correct!', fbBad:'❌ Wrong — Correct answer:',
+    fbSkip:'⏭ Skipped — Correct answer:', fbSkipAuto:'⏱ Time up — Correct answer:',
+    resMsg:['Excellent! You are ready for the exam.','Good result, a little more revision!','Keep studying, you\'ll get there!'],
+    resOk:'Correct', resBad:'Wrong', resSkip:'Skipped',
+    tpHd:'Results by TP',
+    restart:'🔄 Restart all', reviewW:'❌ Review mistakes', reviewS:'⏭ Review skipped',
+    hint:'← → navigate · A B C D answer · S skip',
+    filters:['📚 All questions','📡 TP1 — Telnet / Labtainer','⚔️ TP2 — TCP Attacks','🔐 TP3 — OpenSSL / PKI','🔀 Mixed','❌ Wrong only','⏭ Skipped only'],
+    filterVals:['all','TP1','TP2','TP3','Mixed','wrong','skipped'],
+    noQ:'No questions match this filter. Try another.',
+    langSwitch:'🌐 FR',
+  }
+};
+
+function t(k){ return T[lang][k]; }
+
+/* ═══════════════════════════════════════════
+   UTILITIES
+═══════════════════════════════════════════ */
+function save(){ localStorage.setItem('ia4_v4', JSON.stringify(state)); }
+function esc(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function cur(){ return shown[pos]; }
+function qd(q){ return q[lang]; }
+
+function buildShown(){
+  const fv = document.getElementById('filter').value;
+  if(fv==='all') shown=[...order];
+  else if(fv==='wrong') shown=order.filter(i=>state[i]?.status==='wrong');
+  else if(fv==='skipped') shown=order.filter(i=>state[i]?.status==='skipped');
+  else shown=order.filter(i=>Q[i].tp===fv);
+  if(pos>=shown.length) pos=0;
+}
+
+/* ═══════════════════════════════════════════
+   TIMER
+═══════════════════════════════════════════ */
+function startTimer(){
+  clearInterval(tid);
+  if(state[cur()]) return;
+  tLeft=TIMER;
+  drawTimer();
+  tid=setInterval(()=>{
+    tLeft--;
+    drawTimer();
+    if(tLeft<=0){
+      clearInterval(tid);
+      const i=cur();
+      if(!state[i]){ state[i]={chosen:null,status:'skipped',auto:true}; save(); renderQ(); updateStats(); renderMap(); }
+    }
+  },1000);
+}
+function drawTimer(){
+  const arc=document.getElementById('timerArc');
+  const num=document.getElementById('timerNum');
+  if(!arc||!num) return;
+  const pct=tLeft/TIMER;
+  const circ=113;
+  arc.style.strokeDashoffset=circ-(circ*pct);
+  arc.className='timer-arc'+(tLeft<=8?' urgent':'');
+  num.textContent=tLeft+'s';
+  num.className='timer-num'+(tLeft<=8?' urgent':'');
+}
+
+/* ═══════════════════════════════════════════
+   UI TEXT UPDATE
+═══════════════════════════════════════════ */
+function applyLang(){
+  document.getElementById('brand-title').textContent=t('brandTitle');
+  document.getElementById('brand-sub').textContent=t('brandSub');
+  document.getElementById('lbl-correct').textContent=t('correct');
+  document.getElementById('lbl-wrong').textContent=t('wrong');
+  document.getElementById('lbl-answered').textContent=t('answered');
+  document.getElementById('lbl-left').textContent=t('left');
+  document.getElementById('lbl-shuffle').textContent=t('shuffle');
+  document.getElementById('lbl-random').textContent=t('random');
+  document.getElementById('btn-reset').textContent=t('reset');
+  document.getElementById('lbl-map').textContent=t('mapHd');
+  document.getElementById('leg-ok').textContent=t('legOk');
+  document.getElementById('leg-bad').textContent=t('legBad');
+  document.getElementById('leg-skip').textContent=t('legSkip');
+  document.getElementById('leg-blank').textContent=t('legBlank');
+  document.getElementById('hint-text').textContent=t('hint');
+  document.getElementById('langBtn').textContent=t('langSwitch');
+  buildFilterOptions();
+}
+
+function buildFilterOptions(){
+  const sel=document.getElementById('filter');
+  const cur2=sel.value;
+  sel.innerHTML=t('filters').map((lbl,i)=>`<option value="${t('filterVals')[i]}">${lbl}</option>`).join('');
+  if([...sel.options].some(o=>o.value===cur2)) sel.value=cur2;
+}
+
+/* ═══════════════════════════════════════════
+   RENDER
+═══════════════════════════════════════════ */
+function render(){
+  buildShown();
+  updateStats();
+  if(!shown.length){
+    document.getElementById('main').innerHTML=`<div class="q-card" style="text-align:center;padding:40px;color:var(--text2)">${esc(t('noQ'))}</div>`;
+    renderMap(); return;
+  }
+  const allDone=shown.every(i=>state[i]);
+  if(allDone){ renderResults(); renderMap(); return; }
+  renderQ(); renderMap();
+}
+
+function renderQ(){
+  clearInterval(tid);
+  if(!shown.length) return;
+  const idx=cur();
+  const q=Q[idx];
+  const d=qd(q);
+  const s=state[idx];
+  const tagC=q.tp==='TP1'?'tp1':q.tp==='TP2'?'tp2':q.tp==='TP3'?'tp3':'mixed';
+
+  const opts=d.opts.map((o,i)=>{
+    let cls='opt';
+    if(s){ cls+=' disabled'; if(i===q.ans)cls+=' reveal'; else if(s.chosen===i&&i!==q.ans)cls+=' wrong'; }
+    return `<button class="${cls}" onclick="answer(${i})" ${s?'disabled':''}><span class="ltr">${LETTERS[i]}</span><span class="opt-text">${esc(o)}</span></button>`;
+  }).join('');
+
+  let fbHTML='';
+  if(s){
+    const correct=`${LETTERS[q.ans]}. ${esc(d.opts[q.ans])}`;
+    if(s.status==='correct'){
+      fbHTML=`<div class="fb ok show"><div class="fb-title ok-t">${t('fbOk')}</div><div class="fb-exp">${esc(d.exp)}</div></div>`;
+    } else if(s.status==='wrong'){
+      fbHTML=`<div class="fb bad show"><div class="fb-title bad-t">${t('fbBad')} ${correct}</div><div class="fb-exp">${esc(d.exp)}</div></div>`;
+    } else {
+      const lbl=s.auto?t('fbSkipAuto'):t('fbSkip');
+      fbHTML=`<div class="fb skip show"><div class="fb-title skip-t">${lbl} ${correct}</div><div class="fb-exp">${esc(d.exp)}</div></div>`;
+    }
+  }
+
+  const nextBtn=s?`<button class="btn primary" onclick="nextQ()">${t('next')}</button>`:'';
+
+  document.getElementById('main').innerHTML=`
+    <div class="q-card">
+      <div class="q-top">
+        <div class="q-top-left">
+          <span class="tag ${tagC}">${q.tp}</span>
+          <span class="q-num">Q${pos+1} / ${shown.length}</span>
+        </div>
+        <div class="timer-ring">
+          <svg width="44" height="44" viewBox="0 0 44 44">
+            <circle class="timer-track" cx="22" cy="22" r="18"/>
+            <circle class="timer-arc" id="timerArc" cx="22" cy="22" r="18" style="stroke-dashoffset:0"/>
+          </svg>
+          <div class="timer-num" id="timerNum">${TIMER}s</div>
+        </div>
+      </div>
+      <div class="q-text">${esc(d.q)}</div>
+      <div class="options">${opts}</div>
+      ${fbHTML}
+      <div class="nav">
+        <div class="nav-l">
+          <button class="btn" onclick="prevQ()" ${pos===0?'disabled':''} >${t('prev')}</button>
+          <button class="btn" onclick="skipQ()">${t('skip')}<kbd class="kbd">S</kbd></button>
+        </div>
+        <div class="nav-r">
+          ${nextBtn}
+          <button class="btn" onclick="randomQ()" title="Random">${t('rnd')}</button>
+        </div>
+      </div>
+    </div>`;
+
+  if(!s) startTimer();
+}
+
+function renderResults(){
+  clearInterval(tid);
+  const vals=Object.values(state);
+  const ok=vals.filter(x=>x.status==='correct').length;
+  const bad=vals.filter(x=>x.status==='wrong').length;
+  const sk=vals.filter(x=>x.status==='skipped').length;
+  const total=shown.length;
+  const pct=total?Math.round(ok/total*100):0;
+  const emoji=pct>=80?'🎉':pct>=60?'👍':'💪';
+  const msg=pct>=80?t('resMsg')[0]:pct>=60?t('resMsg')[1]:t('resMsg')[2];
+  const tps=['TP1','TP2','TP3','Mixed'];
+  const colors=['#4e8ef7','#f0b429','#40c057','#cc5de8'];
+  const rows=tps.map((tp,ti)=>{
+    const tq=shown.filter(i=>Q[i].tp===tp);
+    if(!tq.length) return '';
+    const tok=tq.filter(i=>state[i]?.status==='correct').length;
+    const p=Math.round(tok/tq.length*100);
+    return `<div class="tp-row">
+      <div class="tp-lbl" style="color:${colors[ti]}">${tp}</div>
+      <div class="tp-bar"><div class="tp-fill" style="width:${p}%;background:${colors[ti]}"></div></div>
+      <div class="tp-pct">${p}% (${tok}/${tq.length})</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('main').innerHTML=`
+    <div class="results">
+      <div class="res-emoji">${emoji}</div>
+      <div class="res-pct" style="color:${pct>=80?'var(--ok)':pct>=60?'var(--warn)':'var(--bad)'}">${pct}%</div>
+      <div class="res-msg">${esc(msg)}</div>
+      <div class="res-cards">
+        <div class="res-card"><div class="res-card-n" style="color:var(--ok)">${ok}</div><div class="res-card-l">${t('resOk')}</div></div>
+        <div class="res-card"><div class="res-card-n" style="color:var(--bad)">${bad}</div><div class="res-card-l">${t('resBad')}</div></div>
+        <div class="res-card"><div class="res-card-n" style="color:var(--warn)">${sk}</div><div class="res-card-l">${t('resSkip')}</div></div>
+      </div>
+      <div class="tp-section"><div class="tp-hd">${t('tpHd')}</div>${rows}</div>
+      <div class="res-btns">
+        <button class="btn primary" onclick="restartAll()">${t('restart')}</button>
+        <button class="btn" onclick="reviewWrong()">${t('reviewW')}</button>
+        <button class="btn" onclick="reviewSkipped()">${t('reviewS')}</button>
+      </div>
+    </div>`;
+}
+
+function updateStats(){
+  buildShown();
+  const vals=Object.values(state);
+  const ok=vals.filter(x=>x.status==='correct').length;
+  const bad=vals.filter(x=>x.status==='wrong').length;
+  const ans=vals.length;
+  const left=shown.filter(i=>!state[i]).length;
+  document.getElementById('sOk').textContent=ok;
+  document.getElementById('sWrong').textContent=bad;
+  document.getElementById('sAns').textContent=ans;
+  document.getElementById('sLeft').textContent=left;
+  const pct=Q.length?Math.round(ans/Q.length*100):0;
+  document.getElementById('progFill').style.width=pct+'%';
+  document.getElementById('progText').textContent=`Q${pos+1} / ${shown.length}`;
+  document.getElementById('progPct').textContent=pct+'%';
+}
+
+function renderMap(){
+  if(!mapOpen) return;
+  document.getElementById('mapGrid').innerHTML=shown.map((idx,i)=>{
+    const s=state[idx];
+    let cls='mpill';
+    if(s?.status==='correct')cls+=' ok';
+    else if(s?.status==='wrong')cls+=' bad';
+    else if(s?.status==='skipped')cls+=' skipped';
+    if(i===pos)cls+=' cur';
+    return `<button class="${cls}" onclick="goTo(${i})">${i+1}</button>`;
+  }).join('');
+}
+
+/* ═══════════════════════════════════════════
+   ACTIONS
+═══════════════════════════════════════════ */
+function answer(chosen){
+  const idx=cur(); if(state[idx]) return;
+  clearInterval(tid);
+  state[idx]={chosen,status:chosen===Q[idx].ans?'correct':'wrong'};
+  save(); renderQ(); updateStats(); renderMap();
+}
+function skipQ(){
+  const idx=cur();
+  if(!state[idx]){ clearInterval(tid); state[idx]={chosen:null,status:'skipped'}; save(); }
+  pos=(pos+1)%shown.length; render();
+}
+function nextQ(){ pos=(pos+1)%shown.length; render(); }
+function prevQ(){ if(pos>0){pos--; render();} }
+function randomQ(){ pos=Math.floor(Math.random()*shown.length); render(); }
+function goTo(i){ pos=i; render(); }
+function setFilter(){ pos=0; render(); }
+function toggleMap(){ mapOpen=!mapOpen; document.getElementById('mapPanel').classList.toggle('open',mapOpen); renderMap(); }
+function shuffleQ(){
+  for(let i=order.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[order[i],order[j]]=[order[j],order[i]];}
+  pos=0; render();
+}
+function toggleDark(){
+  dark=dark==='1'?'0':'1';
+  dark==='1'?document.documentElement.setAttribute('data-dark','1'):document.documentElement.removeAttribute('data-dark');
+  document.getElementById('darkBtn').textContent=dark==='1'?'☀️':'🌙';
+  localStorage.setItem('ia4_dark',dark);
+}
+function toggleLang(){
+  lang=lang==='fr'?'en':'fr';
+  localStorage.setItem('ia4_lang',lang);
+  applyLang(); render();
+}
+function resetQuiz(){
+  if(!confirm(lang==='fr'?'Réinitialiser toutes les réponses ?':'Reset all answers?')) return;
+  state={}; save(); pos=0; render();
+}
+function restartAll(){ state={}; save(); pos=0; document.getElementById('filter').value='all'; render(); }
+function reviewWrong(){ document.getElementById('filter').value='wrong'; pos=0; render(); }
+function reviewSkipped(){ document.getElementById('filter').value='skipped'; pos=0; render(); }
+
+/* ═══════════════════════════════════════════
+   KEYBOARD
+═══════════════════════════════════════════ */
+document.addEventListener('keydown',e=>{
+  if(['INPUT','SELECT','TEXTAREA'].includes(e.target.tagName)) return;
+  if(e.key==='ArrowRight'||e.key==='n') nextQ();
+  else if(e.key==='ArrowLeft'||e.key==='p') prevQ();
+  else if(e.key==='s'||e.key==='S') skipQ();
+  else{
+    const i='abcd'.indexOf(e.key.toLowerCase());
+    if(i>=0){const idx=cur();if(idx!==undefined&&i<Q[idx][lang].opts.length)answer(i);}
+  }
+});
+
+/* ═══════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════ */
+if(dark==='1') document.getElementById('darkBtn').textContent='☀️';
+applyLang();
+render();
+</script>
+</body>
+</html>
+HTMLEOF
+echo "Done — $(wc -c < /mnt/user-data/outputs/ia4_qcm_v3.html) bytes"
